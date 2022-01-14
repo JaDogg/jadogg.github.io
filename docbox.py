@@ -1,26 +1,36 @@
+import argparse
 import html
 import os.path
+import re
+import subprocess
 from enum import Enum
 from typing import List
-import re
 
 import markdown
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 INPUT_DIR = os.path.join(ROOT, "input")
-TEMPLATE_CELL = os.path.join(ROOT, "template", "cell.html")
-TEMPLATE_MAIN0 = os.path.join(ROOT, "template", "main0.html")
-TEMPLATE_MAIN1 = os.path.join(ROOT, "template", "main1.html")
+TEMPLATE_ROOT = os.path.join(ROOT, "template")
+TEMPLATE_CELL = os.path.join(TEMPLATE_ROOT, "cell.html")
+TEMPLATE_MAIN0 = os.path.join(TEMPLATE_ROOT, "main0.html")
+TEMPLATE_MAIN1 = os.path.join(TEMPLATE_ROOT, "main1.html")
 OUTPUT_FILE = os.path.join(ROOT, "index.html")
 NEWLINE = '\n'  # Unix newline character
 TITLE = html.escape("JaDogg's Website")
 DESC = html.escape("JaDogg's Website -> I love programming in C++ and Python. This is my new website.")
 NOT_ALLOWED = re.compile(r"[^a-z0-9]")
 TWO_OR_MORE_DASHES = re.compile(r"[\-]+")
+MINIFIER_COMMAND = "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags " \
+                   "--remove-redundant-attributes --remove-script-type-attributes " \
+                   "--remove-tag-whitespace --use-short-doctype " \
+                   "--minify-css true --minify-js true -o \"$OUT$\" \"$OUT$\""
 
 
 class IdGen:
     def __init__(self):
+        self._unique = set()
+
+    def reset(self):
         self._unique = set()
 
     def generate(self, text: str):
@@ -40,6 +50,10 @@ class TitleNumGen:
         self._prev_level = -1
         self._counters = []
 
+    def reset(self):
+        self._prev_level = -1
+        self._counters = []
+
     def generate(self, level):
         if self._prev_level < level:
             self._counters.append(0)
@@ -51,7 +65,15 @@ class TitleNumGen:
         return self._conv()
 
     def _conv(self):
-        return "[" + ".".join([str(x) for x in self._counters]) + "]"
+        return "[" + ".".join([str(x) for x in self._counters]) + "] "
+
+
+class NullNumGen:
+    def generate(self, _):
+        return ""
+
+    def reset(self):
+        pass
 
 
 ID_GEN = IdGen()
@@ -135,7 +157,7 @@ class DocBoxFile:
                     level, text = count_and_strip(stripped_line, "#")
                     num = NUM_GEN.generate(level)
                     id_ = ID_GEN.generate(text)
-                    text = num + " " + text
+                    text = num + text
                     # Title just uses HTML escape, no need for fancy markdown for titles
                     token = Token(TokenType.HEADER, html.escape(text), text, level)
                     token.header_id = id_
@@ -229,7 +251,7 @@ class HtmlConverter:
         Html Converter - convert set of docbox files to a single html
         :param files: list of DocBoxFile objects
         """
-        self._files = sorted(files, key=lambda f: f.file_path)
+        self._files = files
         self._target = target
         with open(TEMPLATE_CELL, "r+", encoding="utf-8") as h:
             self._cell_template = h.read()
@@ -318,6 +340,7 @@ class HtmlConverter:
             for cell in self._put_cell_in_template(cells):
                 h.write(cell)
             h.write(self._fill_main_template(self._main_template1))
+        subprocess.run(MINIFIER_COMMAND, shell=True, check=True)
 
     def _fill_main_template(self, template_text: str):
         return template_text.replace("$TITLE$", TITLE) \
@@ -336,13 +359,60 @@ class HtmlConverter:
             yield Token(TokenType.NOTE_RAW_HTML, "<hr />", "<hr />")
 
 
-def main():
-    docs = []
-    for x in os.listdir(INPUT_DIR):
-        if x.endswith(".docbox"):
-            docs.append(DocBoxFile(os.path.join(INPUT_DIR, x)))
-    HtmlConverter(docs, OUTPUT_FILE).convert()
+def _convert(reversed_=False):
+    docs = [x for x in os.listdir(INPUT_DIR) if x.endswith(".docbox")]
+    if reversed_:
+        docs = sorted(docs, key=lambda x: -int(x[:4]))
+    else:
+        docs = sorted(docs, key=lambda x: int(x[:4]))
+    docs = [os.path.join(INPUT_DIR, x) for x in docs]
+    HtmlConverter([DocBoxFile(x) for x in docs], OUTPUT_FILE).convert()
+
+
+def conv(arguments=None):
+    global INPUT_DIR
+    global OUTPUT_FILE
+    global TITLE
+    global DESC
+    global TEMPLATE_ROOT
+    global TEMPLATE_CELL
+    global TEMPLATE_MAIN0
+    global TEMPLATE_MAIN1
+    global MINIFIER_COMMAND
+    global NUM_GEN
+    global ID_GEN
+    parser = argparse.ArgumentParser("docbox", description="Docbox HTML Generator")
+    parser.add_argument("-o,--output", dest="out", type=str, default=OUTPUT_FILE, help="Output file")
+    parser.add_argument("--input", dest="inp", type=str, default=INPUT_DIR, help="Input dir")
+    parser.add_argument("--template", dest="template", type=str, default=TEMPLATE_ROOT,
+                        help="Use a different template directory")
+    parser.add_argument("--title", dest="title", type=str, default="JaDogg's Website", help="Set a title")
+    parser.add_argument("--desc", dest="desc", type=str,
+                        default="JaDogg's Website -> I love programming in C++ and Python. This is my new website.",
+                        help="Set a description")
+    parser.add_argument("-r,--reverse", dest="r", default=False, action="store_true",
+                        help="Create output using input files in reverse order")
+    parser.add_argument("--no-number", dest="nonum", default=False, action="store_true",
+                        help="Do not put numbers in titles")
+    if arguments:
+        result = parser.parse_args(arguments)
+    else:
+        result = parser.parse_args()
+    INPUT_DIR = result.inp
+    OUTPUT_FILE = result.out
+    MINIFIER_COMMAND = MINIFIER_COMMAND.replace("$OUT$", OUTPUT_FILE)
+    TITLE = html.escape(result.title)
+    DESC = html.escape(result.title)
+    TEMPLATE_ROOT = result.template
+    if result.nonum:
+        NUM_GEN = NullNumGen()
+    TEMPLATE_CELL = os.path.join(TEMPLATE_ROOT, "cell.html")
+    TEMPLATE_MAIN0 = os.path.join(TEMPLATE_ROOT, "main0.html")
+    TEMPLATE_MAIN1 = os.path.join(TEMPLATE_ROOT, "main1.html")
+    ID_GEN.reset()
+    NUM_GEN.reset()
+    _convert(result.r)
 
 
 if __name__ == '__main__':
-    main()
+    conv()
