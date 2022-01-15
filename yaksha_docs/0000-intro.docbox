@@ -1,5 +1,5 @@
 !!
-<div class="banner-image"><img alt="Yaksha Programming Language" src="images/yk-banner.png" /></div>
+<div class="banner-image"><img alt="Yaksha Programming Language" src="images/yk-banner.png" style="max-width: 100%;" /></div>
 !!
 ---
 # Introduction
