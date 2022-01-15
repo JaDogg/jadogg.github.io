@@ -9,7 +9,7 @@ from typing import List
 import markdown
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "input")
+INPUT_DIR = os.path.join(ROOT, "posts")
 TEMPLATE_ROOT = os.path.join(ROOT, "template")
 TEMPLATE_CELL = os.path.join(TEMPLATE_ROOT, "cell.html")
 TEMPLATE_MAIN0 = os.path.join(TEMPLATE_ROOT, "main0.html")
