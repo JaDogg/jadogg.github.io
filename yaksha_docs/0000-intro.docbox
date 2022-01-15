@@ -10,7 +10,7 @@ Yaksha – A manual memory managed, compiled to C99, programming language with p
 ## Philosophy
 ---
 I am not trying to build zig, rust, or C++. So, syntax will be simple, minimal and there will be some manual memory management involved. There will be first class support for Windows.  One goal is to have simple access to GPU/parallel programming (this is not even started).
-;This is a single person project.
+;This is a single person project, so any advice, pull-requests/issues, fixes to documentation grammar errors, fixes to spelling errors, well wishes, constructive criticism and/or any other kind of help is welcome.
 ---
 ## Sample
 ---
