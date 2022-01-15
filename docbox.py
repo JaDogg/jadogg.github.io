@@ -56,7 +56,12 @@ class TitleNumGen:
         self._counters = []
 
     def generate(self, level):
-        if self._prev_level < level:
+        if level == 1:
+            if self._counters:
+                self._counters = self._counters[:1]
+            else:
+                self._counters = [0]
+        elif self._prev_level < level:
             self._counters.append(0)
         elif self._prev_level > level and len(self._counters) >= 2:
             self._counters.pop()
