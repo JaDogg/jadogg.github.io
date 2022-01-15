@@ -320,7 +320,7 @@ class HtmlConverter:
                 elif section.token_type == TokenType.HEADER:
                     if section.level == 1:
                         toc.append(
-                            "<p><a href=\"#{id_}\">{title}</a></p>".format(id_=section.header_id, title=section.data))
+                            "<div class=\"toc-item\"><a href=\"#{id_}\">{title}</a></div>".format(id_=section.header_id, title=section.data))
                     content.append(
                         "<h{level} id=\"{id_}\">{title}</h{level}>".format(id_=section.header_id, title=section.data,
                                                                            level=section.level + 1))
