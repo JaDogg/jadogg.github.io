@@ -3,8 +3,8 @@ from docbox import conv
 
 
 def main():
-    # Create index.html
     conv(["-r", "--no-number", "-o", "docs/index.html"])
+    conv(["--all-headers-in-toc", "--input", "yaksha_docs", "-o", "docs/yaksha.html"])
 
 
 if __name__ == "__main__":

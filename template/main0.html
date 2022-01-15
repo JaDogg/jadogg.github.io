@@ -124,30 +124,30 @@
         padding-right: 1px;
     }
 
-    /* https://stackoverflow.com/a/248013/1355145 */
-    pre {
-        white-space: pre-wrap; /* Since CSS 2.1 */
-        white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
-        white-space: -pre-wrap; /* Opera 4-6 */
-        white-space: -o-pre-wrap; /* Opera 7 */
-        word-wrap: break-word; /* Internet Explorer 5.5+ */
-        counter-reset: line;
-    }
+    /*!* https://stackoverflow.com/a/248013/1355145 *!*/
+    /*pre {*/
+    /*    white-space: pre-wrap; !* Since CSS 2.1 *!*/
+    /*    white-space: -moz-pre-wrap; !* Mozilla, since 1999 *!*/
+    /*    white-space: -pre-wrap; !* Opera 4-6 *!*/
+    /*    white-space: -o-pre-wrap; !* Opera 7 *!*/
+    /*    word-wrap: break-word; !* Internet Explorer 5.5+ *!*/
+    /*    counter-reset: line;*/
+    /*}*/
 
-    pre > span {
-        display: block;
-    }
+    /*pre > span {*/
+    /*    display: block;*/
+    /*}*/
 
-    pre > span:before {
-        counter-increment: line;
-        content: counter(line);
-        display: inline-block;
-        border-right: 1px solid #ddd;
-        padding: 0 .5em;
-        margin-right: .5em;
-        color: #00c5f2;
-        -webkit-user-select: none;
-    }
+    /*pre > span:before {*/
+    /*    counter-increment: line;*/
+    /*    content: counter(line);*/
+    /*    display: inline-block;*/
+    /*    border-right: 1px solid #ddd;*/
+    /*    padding: 0 .5em;*/
+    /*    margin-right: .5em;*/
+    /*    color: #00c5f2;*/
+    /*    -webkit-user-select: none;*/
+    /*}*/
 
     hr {
         border: none;
@@ -170,6 +170,8 @@
             width: 100%;
         }
     }
+
+    $STYLES$
 </style>
 
 <body>
