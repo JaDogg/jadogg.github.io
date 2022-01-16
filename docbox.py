@@ -89,6 +89,7 @@ class TokenType(Enum):
     Token types
     """
     RAW_HTML = 1  # Any line that starts with `!!` read all lines until another `!!`, whole thing is raw HTML section
+    # Alternatively line starting with !!! is a single line of raw html.
     HEADER = 2  # Any line that starts with a `#` is <h1>, `##` is h2, `###` is h3, and so forth until h6.
     BULLET = 3  # Any line that starts with `*` is a bullet point, `**` is a bullet point inside a bullet point
     SEPARATOR = 4  # if line contains `---` only (otherwise it's a normal line), this separate notes
@@ -182,6 +183,8 @@ class DocBoxFile:
                 elif stripped_line.startswith(";"):
                     tokens.append(
                         Token(TokenType.NOTE, markdown.markdown(html.escape(stripped_line[1:])), stripped_line[1:]))
+                elif stripped_line.startswith("!!!"):
+                    tokens.append(Token(TokenType.RAW_HTML, stripped_line[3:], stripped_line[3:]))
                 elif stripped_line.startswith("!!"):
                     mode = "html"  # TokenType.RAW_HTML
                     html_lines = []  # this clears our temporary buffer

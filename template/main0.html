@@ -124,6 +124,11 @@
         padding-right: 1px;
     }
 
+    .highlight {
+        border: 1px dashed gray;
+        background-color: black;
+    }
+
     /* reference https://stackoverflow.com/a/248013 */
     pre {
         font-size: 0.6em;
@@ -142,6 +147,33 @@
 
     .center-text {
         text-align: center;
+    }
+
+    .red-status {
+        display: inline-block;
+        border-radius: 50px;
+        background: #ff7d7d;
+        color: #000000;
+        padding: 0 20px;
+        font-size: 0.8em;
+    }
+
+    .green-status {
+        display: inline-block;
+        border-radius: 50px;
+        background: #77c01b;
+        color: #000000;
+        padding: 0 20px;
+        font-size: 0.8em;
+    }
+
+    .yellow-status {
+        display: inline-block;
+        border-radius: 50px;
+        background: #c0a600;
+        color: #000000;
+        padding: 0 20px;
+        font-size: 0.8em;
     }
 
     @media (max-width: 800px) {
