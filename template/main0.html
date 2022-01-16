@@ -126,6 +126,7 @@
 
     /* reference https://stackoverflow.com/a/248013 */
     pre {
+        font-size: 0.6em;
         white-space: pre-wrap; /* Since CSS 2.1 */
         white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
         white-space: -pre-wrap; /* Opera 4-6 */
@@ -137,6 +138,10 @@
         border: none;
         border-top: 1px dashed gray;
         margin-bottom: 15px;
+    }
+
+    .center-text {
+        text-align: center;
     }
 
     @media (max-width: 800px) {
@@ -153,6 +158,17 @@
         .content {
             width: 100%;
         }
+
+        .boxes {
+            width: 100%;
+        }
+
+        .table-of-contents {
+            width: 100%;
+            position: sticky;
+            top: 0;
+            background: #323232;
+        }
     }
 
     $STYLES$
@@ -160,9 +176,9 @@
 
 <body>
 <div class="container">
+    <h1 class="center-text">$TITLE$</h1>
     <div class="table-of-contents">
         $TOC$
     </div>
     <div class="boxes">
-        <h1 class="center-text">$TITLE$</h1>
         <hr/>
