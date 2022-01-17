@@ -1,6 +1,4 @@
-!!
-<div class="banner-image"><img alt="Yaksha Programming Language" src="images/yk-banner.png" style="max-width: 100%;" /></div>
-!!
+!!!<div class="banner-image"><img alt="Yaksha Programming Language" src="images/yk-banner.png" style="max-width: 100%;" /></div>
 ---
 # Introduction
 ---
@@ -17,7 +15,7 @@ I am not trying to build zig, rust, or C++. So, syntax will be simple, minimal a
 ### Input code
 ---
 
-```
+```yaksha
 def factorial(x: int) -> int:
     if x <= 0:
         return 1
