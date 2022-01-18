@@ -1,3 +1,73 @@
+"""# DocBox Format
+---
+Rather simple file format to generate 2 sided content+note style documentation/web pages from a given template.
+;Which means I was lazy.
+---
+## Different types of content that's allowed
+---
+*`RAW_HTML` - Any line that starts with `!!` read all lines until another `!!`, whole thing is raw HTML section
+**Alternatively line starting with !!! is a single line of raw html.
+*`HEADER` - Any line that starts with a `#` is <h1>, `##` is h2, `###` is h3, and so forth until h6.
+*`BULLET` - Any line that starts with `*` is a bullet point, `**` is a bullet point inside a bullet point
+*`SEPARATOR` - if line contains `---` only (otherwise it's a normal line), this separate notes
+*`NOTE` - if a line starts with `;` it is a note, which we will add to same cell on right side
+*`NOTE_RAW_HTML` - if a line starts with `;!` same as note but in raw HTML
+*`CODE` - lines between two triple backticks
+*`DEFAULT` - default lines.
+*All lines without RAW HTML content are also treated as markdown.
+;I wanted a quick and dirty solution, so this does not show any errors for bad input.
+;If all content doesn't show up you probably made a mistake.
+---
+## Output HTML file format
+---
+We basically just replace `$TITLE$` with title, `$DESCRIPTION$` with description.
+Table of contents are generated from headers and should go to `$TOC$`.
+Also, `$STYLES$` is replaced with pygments style.
+Each section of the document is written as below.
+---
+```text
++---------------+------------------------------------------+------------------+
+|               |                                          |                  |
+| Table         | Content                                  |  Note            |
+| of            | Part 01                                  |  Part 01         |
+| Contents      |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               +------------------------------------------+------------------+
+|               |                                          |                  |
+|               | Content                                  |  Note            |
+|               | Part 02                                  |  Part 02         |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
+|               |                                          |                  |
++---------------+------------------------------------------+------------------+
+```
+;I created this from asciiflow site.
+---
+##  Template files
+---
+Template directory should contain following
+*`cell.html` - Format of a single content+note cell.
+*`main0.html` - HTML before cells.
+*`main1.html` - HTML after cells.
+;All content goes between `main0.html` and `main1.html`
+---
+"""
 import argparse
 import html
 import keyword
@@ -491,10 +561,20 @@ class DocBoxFile:
     * This reads and breaks a file to tokens that HtmlConverter can write as HTML
     """
 
-    def __init__(self, file_path: str, num_gen, id_gen):
+    def __init__(self, file_path: str, num_gen, id_gen, text: str = ""):
         self._file_path = file_path
         self._num_gen = num_gen
         self._id_gen = id_gen
+        self._text = text
+
+    def _get_lines(self):
+        if self._text:
+            for line in self._text.splitlines():
+                yield line
+        else:
+            with open(self._file_path, "r+", encoding="utf-8") as f:
+                for line in f:
+                    yield line
 
     def parse(self) -> List[Token]:
         tokens: List[Token] = []
@@ -502,118 +582,61 @@ class DocBoxFile:
         html_lines = []
         code_lines = []
         possible_type = "python"
-        with open(self._file_path, "r+", encoding="utf-8") as f:
-            for line in f:
-                # remove all spaces from left side of the line
-                # as we do ignore those
-                stripped_line = line.lstrip()
-                if mode != "code" and not stripped_line:
+        for line in self._get_lines():
+            # remove all spaces from left side of the line
+            # as we do ignore those
+            stripped_line = line.lstrip()
+            if mode != "code" and not stripped_line:
+                continue
+            if mode == "html":
+                if stripped_line.startswith("!!"):
+                    tokens.append(Token(TokenType.RAW_HTML, NEWLINE.join(html_lines), NEWLINE.join(html_lines)))
+                    mode = "any"
                     continue
-                if mode == "html":
-                    if stripped_line.startswith("!!"):
-                        tokens.append(Token(TokenType.RAW_HTML, NEWLINE.join(html_lines), NEWLINE.join(html_lines)))
-                        mode = "any"
-                        continue
-                    html_lines.append(stripped_line)
-                elif mode == "code":
-                    if stripped_line.startswith("```"):
-                        code = NEWLINE.join(code_lines)
-                        tokens.append(Token(TokenType.RAW_HTML, pyg_highlight(code, possible_type), code))
-                        mode = "any"
-                        possible_type = "python"
-                        continue
-                    code_lines.append(line.rstrip())
-                elif stripped_line.startswith("*"):
-                    level, text = count_and_strip(stripped_line, "*")
-                    tokens.append(Token(TokenType.BULLET, markdown.markdown(html.escape(text)), text, level))
-                elif stripped_line.startswith("#"):
-                    level, text = count_and_strip(stripped_line, "#")
-                    num = self._num_gen.generate(level)
-                    id_ = self._id_gen.generate(text)
-                    text = num + text
-                    # Title just uses HTML escape, no need for fancy markdown for titles
-                    token = Token(TokenType.HEADER, html.escape(text), text, level)
-                    token.header_id = id_
-                    tokens.append(token)
-                elif stripped_line.startswith(";!"):
-                    tokens.append(Token(TokenType.NOTE_RAW_HTML, stripped_line[2:], stripped_line[2:]))
-                elif stripped_line.startswith(";"):
-                    tokens.append(
-                        Token(TokenType.NOTE, markdown.markdown(html.escape(stripped_line[1:])), stripped_line[1:]))
-                elif stripped_line.startswith("!!!"):
-                    tokens.append(Token(TokenType.RAW_HTML, stripped_line[3:], stripped_line[3:]))
-                elif stripped_line.startswith("!!"):
-                    mode = "html"  # TokenType.RAW_HTML
-                    html_lines = []  # this clears our temporary buffer
-                elif stripped_line.startswith("```"):
-                    mode = "code"
-                    if len(stripped_line) > 3:
-                        type_ = stripped_line[3:].strip().lower()
-                        if type_:
-                            possible_type = type_
-                    code_lines = []
-                elif stripped_line.rstrip() == "---":
-                    tokens.append(Token(TokenType.SEPARATOR, "", ""))
-                else:
-                    tokens.append(
-                        Token(TokenType.DEFAULT, markdown.markdown(html.escape(stripped_line)), stripped_line))
+                html_lines.append(stripped_line)
+            elif mode == "code":
+                if stripped_line.startswith("```"):
+                    code = NEWLINE.join(code_lines)
+                    tokens.append(Token(TokenType.RAW_HTML, pyg_highlight(code, possible_type), code))
+                    mode = "any"
+                    possible_type = "python"
+                    continue
+                code_lines.append(line.rstrip())
+            elif stripped_line.startswith("*"):
+                level, text = count_and_strip(stripped_line, "*")
+                tokens.append(Token(TokenType.BULLET, markdown.markdown(html.escape(text)), text, level))
+            elif stripped_line.startswith("#"):
+                level, text = count_and_strip(stripped_line, "#")
+                num = self._num_gen.generate(level)
+                id_ = self._id_gen.generate(text)
+                text = num + text
+                # Title just uses HTML escape, no need for fancy markdown for titles
+                token = Token(TokenType.HEADER, html.escape(text), text, level)
+                token.header_id = id_
+                tokens.append(token)
+            elif stripped_line.startswith(";!"):
+                tokens.append(Token(TokenType.NOTE_RAW_HTML, stripped_line[2:], stripped_line[2:]))
+            elif stripped_line.startswith(";"):
+                tokens.append(
+                    Token(TokenType.NOTE, markdown.markdown(html.escape(stripped_line[1:])), stripped_line[1:]))
+            elif stripped_line.startswith("!!!"):
+                tokens.append(Token(TokenType.RAW_HTML, stripped_line[3:], stripped_line[3:]))
+            elif stripped_line.startswith("!!"):
+                mode = "html"  # TokenType.RAW_HTML
+                html_lines = []  # this clears our temporary buffer
+            elif stripped_line.startswith("```"):
+                mode = "code"
+                if len(stripped_line) > 3:
+                    type_ = stripped_line[3:].strip().lower()
+                    if type_:
+                        possible_type = type_
+                code_lines = []
+            elif stripped_line.rstrip() == "---":
+                tokens.append(Token(TokenType.SEPARATOR, "", ""))
+            else:
+                tokens.append(
+                    Token(TokenType.DEFAULT, markdown.markdown(html.escape(stripped_line)), stripped_line))
         return tokens
-
-
-# Output HTML file format
-# -------------------------
-# We should basically just replace $TITLE$ with TITLE
-#   and $BOXES$ with outcome of our HTML generation
-# Each section of the document should be written as below
-# Table of contents can be generated from headers and should go to $TOC$
-"""
-  ┌─────────────┬──────────────────────────┬─────────────────┐
-  │             │                          │                 │
-  │             │    Cell     1 content    │    Notes for    │
-  │             │                          │    Cell    1    │
-  │ Table of    ├──────────────────────────┼─────────────────┤
-  │  Contents   │                          │                 │
-  │             │                          │                 │
-  │             │    Cell      2 content   │   Notes for     │
-  │             │                          │   Cell     2    │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             ├──────────────────────────┼─────────────────┤
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             ├──────────────────────────┼─────────────────┤
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             ├──────────────────────────┼─────────────────┤
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  │             │                          │                 │
-  └─────────────┴──────────────────────────┴─────────────────┘
-
-"""
 
 
 class Cell:
@@ -778,6 +801,14 @@ class DocBoxApp:
         parsed_args = self._parse_arguments(arguments)
         self._use_args(parsed_args)
         self._convert(parsed_args.r, parsed_args.allheaders)
+
+    def convert_text(self, arguments, single_file_text: str):
+        parsed_args = self._parse_arguments(arguments)
+        self._use_args(parsed_args)
+        doc_objects = [DocBoxFile("-", self._num_gen, self._id_gen, text=single_file_text)]
+        HtmlConverter(doc_objects, self._output_file, self._template_cell,
+                      self._template_main0, self._template_main1,
+                      self._minifier_command, self._title, self._desc, parsed_args.allheaders).convert()
 
     def _parse_arguments(self, arguments):
         parser = argparse.ArgumentParser("docbox", description="Docbox HTML Generator")
