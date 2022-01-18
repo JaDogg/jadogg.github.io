@@ -6,13 +6,13 @@ Rather simple file format to generate 2 sided content+note style documentation/w
 ## Different types of content that's allowed
 ---
 *`RAW_HTML` - Any line that starts with `!!` read all lines until another `!!`, whole thing is raw HTML section
-**Alternatively line starting with !!! is a single line of raw html.
-*`HEADER` - Any line that starts with a `#` is <h1>, `##` is h2, `###` is h3, and so forth until h6.
+**Alternatively line starting with `!!!` is a single line of raw html.
+*`HEADER` - Any line that starts with a `#` is `h2`, `##` is `h3`, `###` is `h4`, and so forth until `h6`.
 *`BULLET` - Any line that starts with `*` is a bullet point, `**` is a bullet point inside a bullet point
 *`SEPARATOR` - if line contains `---` only (otherwise it's a normal line), this separate notes
 *`NOTE` - if a line starts with `;` it is a note, which we will add to same cell on right side
 *`NOTE_RAW_HTML` - if a line starts with `;!` same as note but in raw HTML
-*`CODE` - lines between two triple backticks
+*`CODE` - lines between two triple backticks.
 *`DEFAULT` - default lines.
 *All lines without RAW HTML content are also treated as markdown.
 ;I wanted a quick and dirty solution, so this does not show any errors for bad input.
@@ -26,36 +26,20 @@ Also, `$STYLES$` is replaced with pygments style.
 Each section of the document is written as below.
 ---
 ```text
-+---------------+------------------------------------------+------------------+
-|               |                                          |                  |
-| Table         | Content                                  |  Note            |
-| of            | Part 01                                  |  Part 01         |
-| Contents      |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               +------------------------------------------+------------------+
-|               |                                          |                  |
-|               | Content                                  |  Note            |
-|               | Part 02                                  |  Part 02         |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-|               |                                          |                  |
-+---------------+------------------------------------------+------------------+
++-----------+-------------+------------+
+|           |             |            |
+| Table     | Content     |  Note      |
+| of        | Part 01     |  Part 01   |
+| Contents  |             |            |
+|           |             |            |
+|           |             |            |
+|           +-------------+------------+
+|           |             |            |
+|           | Content     |  Note      |
+|           | Part 02     |  Part 02   |
+|           |             |            |
+|           |             |            |
++-----------+-------------+------------+
 ```
 ;I created this from asciiflow site.
 ---
