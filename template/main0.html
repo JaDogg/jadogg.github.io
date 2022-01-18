@@ -4,6 +4,13 @@
 <head>
     <meta charset="utf-8">
     <title>$TITLE$</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <meta name="description" content="$DESCRIPTION$">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,15 +77,15 @@
         line-height: 1.1em;
         width: 20%;
         overflow-y: auto;
-        display: inline-block;
-        position: -webkit-sticky;
-        position: sticky;
+        position: fixed;
         top: 20px;
+        bottom: 0;
     }
 
     .container {
         width: 100%;
         display: inline-block;
+        height: 100%;
     }
 
     .boxes {
@@ -201,6 +208,10 @@
             top: 0;
             background: #323232;
         }
+
+        .table-of-contents .real-toc {
+            display: none;
+        }
     }
 
     $STYLES$
@@ -210,7 +221,17 @@
 <div class="container">
     <h1 class="center-text">$TITLE$</h1>
     <div class="table-of-contents">
+        <p>Pages</p>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/yaksha">Yaksha</a> |
+            <a href="/docbox">DocBox</a>
+        </nav>
+        <div class="real-toc">
+        <div>&nbsp;</div>
+        <p>Table of Content</p>
         $TOC$
+        </div>
     </div>
     <div class="boxes">
         <hr/>
