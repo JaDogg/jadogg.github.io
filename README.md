@@ -1,3 +1,2 @@
-# jadogg.github.io
+# Personal website 
 
-* Source code for `https://jadogg.github.io`
