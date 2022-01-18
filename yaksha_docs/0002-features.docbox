@@ -43,7 +43,7 @@
 !!!<p><span class="red-status">not started</span></p>
 ---
 *`f32` or `float` - single precision floats.
-;Same as `float` in `C`
+;Data Type - `f32`, `float` and `f64`
 *`f64` - double precision floats.
 ---
 ## Syntax features
@@ -87,17 +87,29 @@ def main() -> int:
     return 0
 ```
 ---
-#### Native declaration of a function
+#### Exposing C library functions
 ---
+##### Expose a function that starts with yy__
 !!!<p><span class="red-status">not started</span></p>
 ---
-*A function without an implementation.
 *Useful to expose C library code.
 ```yaksha
-@native
+@expose_native
 def getarg(n: int) -> str:
     pass
 ```
+;This compiles to nothing.
+---
+##### Expose a function
+---
+*Useful to expose C library code.
+```yaksha
+@native
+def somefunc(n: int) -> str:
+    pass
+```
+;This compiles to
+;`#define yy__somefunc somefunc`
 ---
 ### Defer statement
 ---
@@ -134,6 +146,16 @@ All done
 ---
 *Delete values.
 *Delete arrays, and other builtin data structures without deleting content.
+```yaksha
+def main() -> int:
+    a: List[int]
+    arrput(a, 1)
+    arrput(a, 2)
+    arrput(a, 3)
+    println(a[0])
+    del a
+    return 0
+```
 ---
 ### Struct/Class statement
 ---
