@@ -79,17 +79,29 @@ def main() -> int:
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
 ---
-*Has a return type.
+*Has a return type if return type is `None` it will be converted to `void`.
 ---
 ```yaksha
 def main() -> int:
     print("Hello World\n")
     return 0
 ```
+#### Generic functions
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+*Has a return type.
+---
+```yaksha
+@expose_native
+@generic(T)
+def arrput(a: Array[T], v: T) -> bool:
+    pass
+```
 ---
 #### Exposing C library functions
 ---
-##### Expose a function that starts with yy__
+##### Expose a function that starts with yk__
 !!!<p><span class="red-status">not started</span></p>
 ---
 *Useful to expose C library code.
@@ -146,16 +158,18 @@ All done
 ---
 *Delete values.
 *Delete arrays, and other builtin data structures without deleting content.
+---
 ```yaksha
 def main() -> int:
     a: List[int]
+    defer(del(a))
     arrput(a, 1)
     arrput(a, 2)
     arrput(a, 3)
     println(a[0])
-    del a
     return 0
 ```
+;Compiles to `free`.
 ---
 ### Struct/Class statement
 ---
@@ -182,12 +196,38 @@ def main() -> int:
 ;`struct` and `class` keywords do the same thing.
 ;Not finalized. I may just go with `struct` or `class`.
 ---
+#### Exposing native structures
+```yaksha
+@native
+struct something:
+    something_id: int
+
+@expose_native
+struct something_else:
+    someother_id: int
+```
+---
 ### Import statement
 ---
 !!!<p><span class="red-status">not started</span></p>
 ---
 *Import a file.
 ;Name mangling takes place for this.
+---
+```yaksha
+import io
+
+def main() -> int:
+    file: io.File = io.open("Haha")
+    defer(io.close(file))
+    if file == None:
+        println("-- failed to read file --")
+        return 1
+    data: str = io.readall(file)
+    println("-- read file --")
+    println(data) 
+    return 0
+```
 ---
 ## Builtin Functions
 ---
