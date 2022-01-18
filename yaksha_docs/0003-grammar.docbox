@@ -1,0 +1,33 @@
+# Language Grammar
+This describes Yaksha language grammar.
+---
+!!!<p><span class="yellow-status">in progress</span></p>
+---
+```python
+program: declare_statements*
+declare_statement:
+    | def_statement
+    | struct_statement
+    | const_statement
+compound_statement:
+    | if_statement
+    | while_statement
+simple_statement:
+    | let_statement
+    | return_statement
+    | defer_statement
+    | 'pass'
+    | 'break'
+    | 'continue'
+    | expr_statement
+    | del_statement
+def_statement: "def" name "(" parameters? ")" block
+let_statement: name ":" data_type ("=" expr)?
+expr_statement: expr
+return_statement: "return" expr
+defer_statement: "defer" (del_statement | expr)
+del_statement: "del" expr
+parameters: parameter+
+parameter: name ':' datatype
+```
+---
