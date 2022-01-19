@@ -1,33 +1,48 @@
 # Language Grammar
-This describes Yaksha language grammar.
+This describes Yaksha language grammar. 
+Lot learned from `Crafting Interpreters` book and Python grammar page.
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
 ---
+## Statements
+---
+This section describes statements and program structure.
+---
 ```python
-program: declare_statements*
-declare_statement:
-    | def_statement
-    | struct_statement
-    | const_statement
+program: import_statement* const_statement* struct_statement* def_statement* 
+standard_statement:
+    | component_statement
+    | simple_statement
 compound_statement:
     | if_statement
     | while_statement
 simple_statement:
-    | let_statement
+    | let_statement 
     | return_statement
     | defer_statement
-    | 'pass'
-    | 'break'
-    | 'continue'
+    | "pass"
+    | "break"
+    | "continue"
     | expr_statement
     | del_statement
-def_statement: "def" name "(" parameters? ")" block
-let_statement: name ":" data_type ("=" expr)?
-expr_statement: expr
-return_statement: "return" expr
-defer_statement: "defer" (del_statement | expr)
-del_statement: "del" expr
-parameters: parameter+
-parameter: name ':' datatype
+base_del_statement: "del" expr
+del_statement: base_del_statement st_end
+def_statement: "def" name "(" parameters? ")" block st_end
+let_statement: name ":" data_type ("=" expr)? st_end
+expr_statement: expr st_end
+return_statement: "return" expr st_end
+const_statement: "const" name "=" (number | string)
+defer_statement: "defer" (base_del_statement | expr) st_end
+block: ":" newline ba_indent standard_statement+ ba_dedent 
+```
+## Useful utils
+```yaksha
+parameters: parameter ("," parameter)*
+parameter: name ":" datatype
+ba_indent: `increase in indentation`
+ba_dedent: `decrease is indentation`
+st_end: newline | eof
+newline: "\n" | "\r\n" 
+eof: `end of file`
 ```
 ---
