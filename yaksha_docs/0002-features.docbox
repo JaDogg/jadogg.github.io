@@ -86,42 +86,45 @@ def main() -> int:
     print("Hello World\n")
     return 0
 ```
+---
+#### Exposing C library functions
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+*Useful to expose C library code.
+```yaksha
+@native("getarg")
+def getarg(n: int) -> str:
+    pass
+```
+;Compiles to:
+;`#define yy__getarg getarg`
+;This is because all Yaksha lang identifiers are prefixed with `yy__` by default.
+---
 #### Generic functions
 ---
 !!!<p><span class="red-status">not started</span></p>
 ---
-*Has a return type.
+*Return type can also be a generic if that generic is used in parameters.
+*String passed inside `@generic(` should be single upper case characters separated by commas.
+;This means it is limited to 26 generics max.
 ---
 ```yaksha
-@expose_native
-@generic(T)
+@native("yk__arrput")
+@generic("T")
 def arrput(a: Array[T], v: T) -> bool:
     pass
-```
----
-#### Exposing C library functions
----
-##### Expose a function that starts with yk__
-!!!<p><span class="red-status">not started</span></p>
----
-*Useful to expose C library code.
-```yaksha
-@expose_native
-def getarg(n: int) -> str:
+
+@native("yk__hmput")
+@generic("K,V")
+def hmput(a: HashMap[K,V], key: K, value: V) -> bool:
+    pass
+
+@native("yk__hmget")
+@generic("K,V")
+def hmget(a: HashMap[K,V], key: K) -> V:
     pass
 ```
-;This compiles to nothing.
----
-##### Expose a function
----
-*Useful to expose C library code.
-```yaksha
-@native
-def somefunc(n: int) -> str:
-    pass
-```
-;This compiles to
-;`#define yy__somefunc somefunc`
 ---
 ### Defer statement
 ---
@@ -176,6 +179,8 @@ def main() -> int:
 !!!<p><span class="red-status">not started</span></p>
 ---
 *Create a custom data structure.
+*Generic structures are not supported yet.
+*Inheritance is not supported yet.
 ---
 ```yaksha
 class student:
@@ -198,14 +203,12 @@ def main() -> int:
 ---
 #### Exposing native structures
 ```yaksha
-@native
+@native("something")
 struct something:
     something_id: int
-
-@expose_native
-struct something_else:
-    someother_id: int
 ```
+;Compiles to
+;`#define yy__something something`
 ---
 ### Import statement
 ---

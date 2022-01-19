@@ -6,10 +6,15 @@ Lot learned from `Crafting Interpreters` book and Python grammar page.
 ---
 ## Statements
 ---
-This section describes statements and program structure.
+This section describes statements and program structure. Program is made from one or more program statements. Standard statements are what goes inside functions.
 ---
 ```python
-program: import_statement* const_statement* struct_statement* def_statement* 
+program: program_statements*
+program_statements:
+    | import_statement
+    | const_statement
+    | struct_statement
+    | def_statement
 standard_statement:
     | component_statement
     | simple_statement
@@ -25,24 +30,52 @@ simple_statement:
     | "continue"
     | expr_statement
     | del_statement
+# Because defer can use del statement or any another expression.
 base_del_statement: "del" expr
 del_statement: base_del_statement st_end
 def_statement: "def" name "(" parameters? ")" block st_end
 let_statement: name ":" data_type ("=" expr)? st_end
 expr_statement: expr st_end
 return_statement: "return" expr st_end
+# Constants compiles to #defines.
 const_statement: "const" name "=" (number | string)
+# Defer can use a del statement or an expr
 defer_statement: "defer" (base_del_statement | expr) st_end
 block: ":" newline ba_indent standard_statement+ ba_dedent 
 ```
+;
+---
+## Expressions
+---
+Expressions are itsy bitsy pieces that make up parts of statements.
+---
+```yaksha
+expr: assignment
+assignment: (fncall ".")? name "=" assignment
+    | logic_or;
+logic_or: logic_and ("or" logic_and)*
+logic_and: equality ("and" equality)*
+equality: comparision (("!=" | "==") comparision)*
+comparision: term ((">" | ">=" | "<" | "<=") term)*
+term: factor (("-" | "+") factor)*
+factor: unary (("/" | "*") unary)*
+unary: ("not" | "-") unary | call
+call: primary ( "(" arguments? ")" | "." name )*
+primary: "True" | "False" | "None" | number | string | triple_quote_string |
+          "(" expr ")"
+```
+;Based on lox grammar.
+---
 ## Useful utils
+---
 ```yaksha
 parameters: parameter ("," parameter)*
 parameter: name ":" datatype
-ba_indent: `increase in indentation`
-ba_dedent: `decrease is indentation`
 st_end: newline | eof
 newline: "\n" | "\r\n" 
-eof: `end of file`
+eof: "end of file"
+ba_indent: "increase in indentation"
+ba_dedent: "decrease is indentation"
 ```
+;`ba_indent` and `ba_dedent` gets calculated before parsing in `block_analyzer` phase.
 ---

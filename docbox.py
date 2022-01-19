@@ -234,7 +234,7 @@ class YakshaLexer(RegexLexer):
                 'assert', 'async', 'await', 'break', 'continue', 'del', 'elif',
                 'else', 'except', 'finally', 'for', 'global', 'if', 'lambda',
                 'pass', 'raise', 'nonlocal', 'return', 'try', 'while', 'yield',
-                'defer', '@native', '@expose_native',
+                'defer', '@native', '@generic', '@device',
                 'yield from', 'as', 'with'), suffix=r'\b'),
              Keyword),
             (words(('True', 'False', 'None'), suffix=r'\b'), Keyword.Constant),
