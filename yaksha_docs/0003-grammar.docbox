@@ -8,7 +8,7 @@ Lot learned from `Crafting Interpreters` book and Python grammar page.
 ---
 This section describes statements and program structure. Program is made from one or more program statements. Standard statements are what goes inside functions.
 ---
-```python
+```yaksha
 program: program_statements*
 program_statements:
     | import_statement
@@ -43,7 +43,8 @@ const_statement: "const" name "=" (number | string)
 defer_statement: "defer" (base_del_statement | expr) st_end
 block: ":" newline ba_indent standard_statement+ ba_dedent 
 ```
-;
+;`defer` statement is special, it can take either a `del` statement or any expression.
+;This allows you to defer a `del`.
 ---
 ## Expressions
 ---
@@ -52,19 +53,20 @@ Expressions are itsy bitsy pieces that make up parts of statements.
 ```yaksha
 expr: assignment
 assignment: (fncall ".")? name "=" assignment
-    | logic_or;
+    | logical_not;
+logical_not: "not" logic_or
 logic_or: logic_and ("or" logic_and)*
 logic_and: equality ("and" equality)*
 equality: comparision (("!=" | "==") comparision)*
 comparision: term ((">" | ">=" | "<" | "<=") term)*
 term: factor (("-" | "+") factor)*
 factor: unary (("/" | "*") unary)*
-unary: ("not" | "-") unary | call
-call: primary ( "(" arguments? ")" | "." name )*
+unary: "-" unary | fncall
+fncall: primary ( "(" arguments? ")" | "." name )*
 primary: "True" | "False" | "None" | number | string | triple_quote_string |
           "(" expr ")"
 ```
-;Based on lox grammar.
+;Based on [lox grammar](https://craftinginterpreters.com/appendix-i.html) and [Python operator precedence](https://www.mathcs.emory.edu/~valerie/courses/fall10/155/resources/op_precedence.html).
 ---
 ## Useful utils
 ---

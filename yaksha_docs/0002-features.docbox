@@ -144,7 +144,7 @@ def onexit() -> int:
     return 0
 
 def main() -> int:
-    defer(onexit())
+    defer onexit()
     println("Hello World")
     return 0
 ```
@@ -165,7 +165,7 @@ All done
 ```yaksha
 def main() -> int:
     a: List[int]
-    defer(del(a))
+    defer del a
     arrput(a, 1)
     arrput(a, 2)
     arrput(a, 3)
@@ -222,7 +222,7 @@ import io
 
 def main() -> int:
     file: io.File = io.open("Haha")
-    defer(io.close(file))
+    defer io.close(file)
     if file == None:
         println("-- failed to read file --")
         return 1
