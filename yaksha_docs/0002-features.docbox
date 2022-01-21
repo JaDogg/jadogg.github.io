@@ -126,6 +126,17 @@ def hmget(a: HashMap[K,V], key: K) -> V:
     pass
 ```
 ---
+#### GPU/OpenCL device functions
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+*Easy access to GPU through OpenCL.
+```yaksha
+@device
+def calculate(n: int) -> int:
+   return 1 + 1 
+```
+---
 ### Defer statement
 ---
 !!!<p><span class="green-status">done</span></p>
@@ -215,7 +226,6 @@ struct something:
 !!!<p><span class="red-status">not started</span></p>
 ---
 *Import a file.
-;Name mangling takes place for this.
 ---
 ```yaksha
 import io
@@ -231,6 +241,7 @@ def main() -> int:
     println(data) 
     return 0
 ```
+;Name mangling takes place for this.
 ---
 ## Builtin Functions
 ---
