@@ -199,7 +199,7 @@ def main() -> int:
 ```
 ;Compiles to `free`.
 ---
-### Struct/Class statement
+### Class statement
 ---
 !!!<p><span class="red-status">not started</span></p>
 ---
@@ -213,7 +213,7 @@ class student:
     name: str
     address: str
 
-struct teacher:
+class teacher:
     teacher_id: int
     name: str
     address: str
@@ -223,10 +223,47 @@ def main() -> int:
     println(sizeof(student))
     return 0    
 ```
-;`struct` and `class` keywords do the same thing.
-;Not finalized. I may just go with `struct` or `class`.
+---
+#### Creating and freeing objects
+---
+```yaksha
+def main() -> int:
+    # Non primitive types are initialized to None 
+    john: student
+    # Creating an instance, will be allocated in heap
+    # Results in a malloc
+    john = student()
+    defer del john
+    # Set fields
+    john.student_id = 10
+    # str objects in structures are not freed automatically
+    john.name = "John Smith"
+    john.address = "1 Road, Negombo"
+    defer del john.name
+    defer del john.address
+    return 0
+```
+---
+It might be better to create a custom function to delete custom objects.
+---
+```yaksha
+def del_student(st: student) -> None:
+    del st.name
+    del st.address
+    del st 
+
+def main() -> int:
+    john: student = student()
+    defer del_student(john)
+    
+    john.student_id = 10
+    john.name = "John Smith"
+    john.address = "1 Road, Negombo"
+    return 0
+```
 ---
 #### Exposing native structures
+---
 ```yaksha
 @native("something")
 struct something:
