@@ -336,6 +336,8 @@ def main() -> int:
 ---
 !!!<p><span class="red-status">not started</span></p>
 ---
+String hashmaps allow `str` keys and any `values`. Values need to be deleted when no longer needed.
+---
 ```yaksha
 def main() -> int:
     m: StringHashMap[int]
@@ -349,4 +351,5 @@ def main() -> int:
 ---
 !!!<p><span class="red-status">not started</span></p>
 ---
+Simple single key single value hashmaps.
 ---

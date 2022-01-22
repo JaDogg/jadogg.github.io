@@ -44,6 +44,11 @@ annotation: "@" name ( "(" (string | triple_quote_string ) ")" ) newline
 def_statement: annotation* "def" name "(" parameters? ")" block st_end
 # Let statement creates variables
 let_statement: name ":" data_type ("=" expr)? st_end
+# Custom data structures
+# Struct value data types must be present
+struct_value: name ":" data_type st_end
+struct_block: ":" newline ba_indent struct_value+ ba_dedent
+stuct_statement: annotation* "class" name struct_block
 # Expression statements, calling functions etc.
 expr_statement: expr st_end
 # Return statement
