@@ -7,7 +7,7 @@ All exposed functionality starts with `yk__` or `YK__`. Yaksha programming langu
 ---
 ## Standard Library modules
 ---
-!!!<p><span class="red-status">not started</span></p>
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
 ---
 Aims to be minimal yet useful library.
 ---

@@ -44,6 +44,10 @@ annotation: "@" name ( "(" (string | triple_quote_string ) ")" ) newline
 def_statement: annotation* "def" name "(" parameters? ")" block st_end
 # Let statement creates variables
 let_statement: name ":" data_type ("=" expr)? st_end
+# If statement
+if_statement: "if" block ("else" block)?
+# While statement
+while_statement: "while" block
 # Custom data structures
 # Struct value data types must be present
 struct_value: name ":" data_type st_end
@@ -66,6 +70,18 @@ block: ":" (newline ba_indent standard_statement+ ba_dedent | simple_statement)
 ```
 ;`defer` statement is special, it can take either a `del` statement or any expression.
 ;This allows you to defer a `del`.
+---
+## Data Type
+---
+```yaksha
+data_type: data_type_part | name "[" data_type_args "]"
+data_type_args: data_type ("," data_type)*
+data_type_part: name | primitive_data_type
+primitive_data_type: "int" | "i8" | "i16" | "i32" | "i64" |
+        "u8" | "u16" | "u32" | "u64" | "str" | "float" | "bool" | "None" |
+        "f32" | "f64"
+```
+;Data type describes, primitives, custom data types and non primitives.
 ---
 ## Expressions
 ---

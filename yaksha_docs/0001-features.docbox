@@ -15,7 +15,7 @@
 ;`sds` library (part of runtime lib) takes care of the heavy lifting.
 ---
 ### String View
-!!!<p><span class="red-status">not started</span></p>
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
 ---
 *Idea of string view is to avoid duplicating strings.
 *Read only.
@@ -142,7 +142,7 @@ def hmget(a: HashMap[K,V], key: K) -> V:
 ---
 #### GPU/OpenCL device functions
 ---
-!!!<p><span class="red-status">not started</span></p>
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
 ---
 *Easy access to GPU through OpenCL.
 ```yaksha
@@ -352,4 +352,13 @@ def main() -> int:
 !!!<p><span class="red-status">not started</span></p>
 ---
 Simple single key single value hashmaps.
+---
+### Hash Set
+---
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
+---
+### String Hash Set
+---
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
+---
 ---
