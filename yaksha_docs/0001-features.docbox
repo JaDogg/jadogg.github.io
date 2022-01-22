@@ -311,3 +311,42 @@ def main() -> int:
 *`itostr` - Converts an `int` to `str` with given base up to 16.
 ;Built in functions may call different implementations in `C` based on input.
 ---
+## Non primitive data types
+---
+This section describes other essential types of builtin structures.
+---
+### Dynamic Arrays
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+```yaksha
+def main() -> int:
+    a: Array[i32]
+    # Prior to calling arrput pointer is set to None
+    defer arrfree(a)
+    arrput(a, 1)
+    arrput(a, 2)
+    # Array access works with `[]`
+    print(a[0])
+    return 0
+```
+;Must ensure array elements are freed. `int` need not be deleted as they are primitive types.
+---
+### String Hash Map
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+```yaksha
+def main() -> int:
+    m: StringHashMap[int]
+    defer smfree(m)
+    smput(m, "banana", 10)
+    return 0
+```
+;`StringHashMap` keys are deleted automatically when `smfree` is invoked.
+---
+### Hash Map
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+---

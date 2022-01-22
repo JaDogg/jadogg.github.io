@@ -53,7 +53,8 @@ const_statement: "const" name "=" (number | string)
 # Import statements include other source files and perform name mangling
 # You need to always rename level 2+ imports
 import_statement: "import" name ( ("." name)+ "as" name )? st_end
-# Dumps unmodified C code
+# Dumps unmodified C code. It would be better to encapsulate these.
+# When used with @native functions compiles to a c macro
 c_code_statement: "ccode" (string | triple_quote_string) st_end
 # Multiline or single simple statement blocks
 block: ":" (newline ba_indent standard_statement+ ba_dedent | simple_statement)

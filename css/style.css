@@ -103,8 +103,9 @@ body, html {
 }
 
 code {
-    border: 1px dashed gray;
-    background-color: #000;
+    border: 1px dashed #25ffd7;
+    background: #10423c;
+    color: #20ffd6;
     padding-left: 1px;
     padding-right: 1px
 }
@@ -133,30 +134,43 @@ hr {
     text-align: center
 }
 
+.blue-status {
+    display: inline-block;
+    border: 1px solid #20deff;
+    background: #103b42;
+    color: #20deff;
+    padding: 0 5px;
+    margin: auto 2px;
+    font-size: .8em
+}
+
 .red-status {
     display: inline-block;
-    border-radius: 50px;
-    background: #ff7d7d;
-    color: #000;
-    padding: 0 20px;
+    border: 1px solid #ff2323;
+    background: #440101;
+    color: #ff2323;
+    padding: 0 5px;
+    margin: auto 2px;
     font-size: .8em
 }
 
 .green-status {
     display: inline-block;
-    border-radius: 50px;
-    background: #77c01b;
-    color: #000;
-    padding: 0 20px;
+    border: 1px solid #20ff56;
+    background: #104210;
+    color: #20ff56;
+    padding: 0 5px;
+    margin: auto 2px;
     font-size: .8em
 }
 
 .yellow-status {
     display: inline-block;
-    border-radius: 50px;
-    background: #c0a600;
-    color: #000;
-    padding: 0 20px;
+    border: 1px solid #ffdd00;
+    background: #544801;
+    color: #ffdd00;
+    padding: 0 5px;
+    margin: auto 2px;
     font-size: .8em
 }
 

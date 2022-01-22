@@ -264,6 +264,7 @@ class YakshaLexer(RegexLexer):
                 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print', 'println', 'sizeof',
                 'property', 'range', 'repr', 'reversed', 'round', 'set', 'setattr',
                 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple',
+                'Array', 'StringHashMap',
                 'type', 'vars', 'zip'), prefix=r'(?<!\.)', suffix=r'\b'),
              Name.Builtin),
             (r'(?<!\.)(self|Ellipsis|NotImplemented|cls)\b', Name.Builtin.Pseudo),
