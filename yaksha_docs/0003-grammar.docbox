@@ -9,14 +9,13 @@ Lot learned from `Crafting Interpreters` book and Python grammar page.
 This section describes statements and program structure. Program is made from one or more program statements. Standard statements are what goes inside functions.
 ---
 ```yaksha
-program: program_statements*
-program_statements:
-    | import_statement
+program: import_statement* program_declaration*
+program_declarations:
     | const_statement
     | struct_statement
     | def_statement
 standard_statement:
-    | component_statement
+    | compound_statement
     | simple_statement
 compound_statement:
     | if_statement
@@ -30,18 +29,34 @@ simple_statement:
     | "continue"
     | expr_statement
     | del_statement
+    | c_code_statement
 # Because defer can use del statement or any another expression.
+# Del statement has two components with and without statement end.
 base_del_statement: "del" expr
 del_statement: base_del_statement st_end
-def_statement: "def" name "(" parameters? ")" block st_end
+# Defer can use a del statement or an expr
+defer_statement: "defer" (base_del_statement | expr) st_end
+# Annotations are used to define types of functions or structures
+# Currently only @device, @native and @generic annotations are available.
+# Annotations may have a single string parameter.
+annotation: "@" name ( "(" (string | triple_quote_string ) ")" ) newline
+# Functions
+def_statement: annotation* "def" name "(" parameters? ")" block st_end
+# Let statement creates variables
 let_statement: name ":" data_type ("=" expr)? st_end
+# Expression statements, calling functions etc.
 expr_statement: expr st_end
+# Return statement
 return_statement: "return" expr st_end
 # Constants compiles to #defines.
 const_statement: "const" name "=" (number | string)
-# Defer can use a del statement or an expr
-defer_statement: "defer" (base_del_statement | expr) st_end
-block: ":" newline ba_indent standard_statement+ ba_dedent 
+# Import statements include other source files and perform name mangling
+# You need to always rename level 2+ imports
+import_statement: "import" name ( ("." name)+ "as" name )? st_end
+# Dumps unmodified C code
+c_code_statement: "ccode" (string | triple_quote_string) st_end
+# Multiline or single simple statement blocks
+block: ":" (newline ba_indent standard_statement+ ba_dedent | simple_statement)
 ```
 ;`defer` statement is special, it can take either a `del` statement or any expression.
 ;This allows you to defer a `del`.

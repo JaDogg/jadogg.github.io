@@ -1,9 +1,48 @@
-# Yaksha runtime library
+# Yaksha library
 ---
-Runtime library uses multiple 3rd party libraries, set of python scripts and few other nuts and bolts to create runtime library sources. 
+Yaksha library uses multiple 3rd party libraries, set of python scripts and few other nuts and bolts to create library sources. 
 ---
 All exposed functionality starts with `yk__` or `YK__`. Yaksha programming language preserves anything that starts with `yk__` or `YK__` while prefixing any other name with `yy__`. 
 ;This avoids collisions with C standard library functions or keywords.
+---
+## Standard Library modules
+---
+!!!<p><span class="red-status">not started</span></p>
+---
+Aims to be minimal yet useful library.
+---
+### IO Module
+---
+Read write files.
+---
+```yaksha
+import io
+```
+---
+### UI Module
+---
+Use nuklear+sokol to create UI applications.
+---
+```yaksha
+import ui
+```
+---
+### CL Module
+---
+Access to OpenCL features and parallel programming.
+---
+```yaksha
+import cl
+
+@device
+def my_program(n: int) -> int:
+    return 1 + 1
+    
+def main() -> int:
+    dvc: cl.device = cl.get_device(0)
+    cl.run(dvc, my_program)
+```
+;Placeholder code, API is not designed yet.
 ---
 ## How does the Yaksha-lang library get packaged?
 ---

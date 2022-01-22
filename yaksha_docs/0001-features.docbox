@@ -101,6 +101,20 @@ def getarg(n: int) -> str:
 ;`#define yy__getarg getarg`
 ;This is because all Yaksha lang identifiers are prefixed with `yy__` by default.
 ---
+C macros can be created as explained below.
+---
+```yaksha
+@native
+def getarg(n: int) -> str:
+    ccode "yk__sdsdup(global_args[yy__n])"
+```
+---
+If `ccode` is there instead of a pass statement, it compiles to a macro.
+---
+```c
+#define yy__getarg(yy_n) (yk__sdsdup(global_args[yy__n]))
+```
+---
 #### Generic functions
 ---
 !!!<p><span class="red-status">not started</span></p>

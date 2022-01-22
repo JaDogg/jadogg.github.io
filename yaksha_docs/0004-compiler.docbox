@@ -8,6 +8,7 @@ This section describes how compiler works.
 ### Tokenizer
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
+---
 *Tokenizer breaks down input to individual tokens and Identifies Keywords.
 *Parsers numbers and strings and check if they are valid according to the grammar.
 ;If any error is detected at this point we still continue up to parser.
@@ -15,6 +16,7 @@ This section describes how compiler works.
 ### Block analyzer
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
+---
 *Convert indentation to `ba_indent`, `ba_dedent` type tokens.
 *Remove comments.
 *Remove extra new lines.
@@ -24,6 +26,7 @@ This section describes how compiler works.
 ### Parser
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
+---
 *Parses tokens returned by block analyzer an AST.
 *AST is represented as a `std::vector` of `stmt*`.
 ;Any errors from previous stages and parsing stage is printed here and program will exit.
@@ -31,6 +34,7 @@ This section describes how compiler works.
 ### Import analyzer
 ---
 !!!<p><span class="red-status">not started</span></p>
+---
 *Analyzes imports.
 *Parses imported files.
 **This step will use more instances of Tokenizer and Parser classes.
@@ -38,9 +42,10 @@ This section describes how compiler works.
 *Rewrite import as prefixed code.
 *Combine ASTs.
 ;Converts all to a single AST that rest of the phases can understand.
-### Def-Struct Visitor
+### Def-Struct-Const Visitor
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
+---
 *Visit `def` statements and collect functions to a map.
 *Visit `class` statements and collect structures to a map.
 ---
@@ -53,6 +58,7 @@ This section describes how compiler works.
 ### Type checker
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
+---
 *Type checker visits AST and check for invalid types.
 *Checks for undefined variables.
 *Checks for undefined functions.
@@ -62,18 +68,21 @@ This section describes how compiler works.
 ### Generic rewriter
 ---
 !!!<p><span class="red-status">not started</span></p>
+---
 *Rewrite generics to be normal functions based on what's passed to them.
 *Rewrite `fncall` expressions to use newly created functions.
 ---
 ### Optimizer
 ---
 !!!<p><span class="red-status">not started</span></p>
+---
 *Remove dead code.
 *Basic constant folding.
 ---
 ### CL-Compiler
 ---
 !!!<p><span class="red-status">not started</span></p>
+---
 *Convert `@device` code to OpenCL program code.
 *Copy necessary structures.
 *Check validity - no generics, no str, no allocations.
@@ -81,6 +90,7 @@ This section describes how compiler works.
 ### C-Compiler
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
+---
 *Writes `C` code from AST.
 *Do any simple optimizations.
 *Handle `defer` statements.

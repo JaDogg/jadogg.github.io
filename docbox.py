@@ -234,7 +234,7 @@ class YakshaLexer(RegexLexer):
                 'assert', 'async', 'await', 'break', 'continue', 'del', 'elif',
                 'else', 'except', 'finally', 'for', 'global', 'if', 'lambda',
                 'pass', 'raise', 'nonlocal', 'return', 'try', 'while', 'yield',
-                'defer', '@native', '@generic', '@device',
+                'defer', '@native', '@generic', '@device', 'ccode',
                 'yield from', 'as', 'with'), suffix=r'\b'),
              Keyword),
             (words(('True', 'False', 'None'), suffix=r'\b'), Keyword.Constant),
@@ -602,7 +602,7 @@ class DocBoxFile:
                 tokens.append(Token(TokenType.NOTE_RAW_HTML, stripped_line[2:], stripped_line[2:]))
             elif stripped_line.startswith(";"):
                 tokens.append(
-                    Token(TokenType.NOTE, markdown.markdown(html.escape(stripped_line[1:])), stripped_line[1:]))
+                    Token(TokenType.NOTE, markdown.markdown((stripped_line[1:])), stripped_line[1:]))
             elif stripped_line.startswith("!!!"):
                 tokens.append(Token(TokenType.RAW_HTML, stripped_line[3:], stripped_line[3:]))
             elif stripped_line.startswith("!!"):
@@ -619,7 +619,7 @@ class DocBoxFile:
                 tokens.append(Token(TokenType.SEPARATOR, "", ""))
             else:
                 tokens.append(
-                    Token(TokenType.DEFAULT, markdown.markdown(html.escape(stripped_line)), stripped_line))
+                    Token(TokenType.DEFAULT, markdown.markdown((stripped_line)), stripped_line))
         return tokens
 
 
