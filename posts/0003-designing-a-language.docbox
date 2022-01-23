@@ -1,0 +1,22 @@
+# Designing a new programming language
+---
+Advantage of creating a new programming languages is that you can start from scratch. You also get to sweeten it yourself and to the right amount. 
+;Programming languages sweeten over time. - [Crafting Interpreters](https://craftinginterpreters.com/control-flow.html#design-note)
+---
+## How do you avoid weird quirks?
+---
+Unpredictability in languages confuse new developers. Additionally, to borrow from zen of python, explicit is better than implicit.
+;Being pure to the language's own philosophy is hard work.
+---
+Explicit is where languages like Java shines. However, at some-point highly explicit languages code becomes too boilerplate like.
+;More fluff and less stuff.
+---
+## Object-oriented programming is pure fluff
+---
+Object-oriented programming does not add to what your code does. Which makes it fall into fluff kind-of category. But it is also a way to abstract away complexity. Which makes it sometimes useful. But like any tool it has its own advantages and disadvantages. If the compiler is not smart, extra indirections just make the program slower.
+---
+## Why one should build a programming language?
+---
+You can define your own flexibility in your language. It is nothing but pure fun.
+;It is a very good programming challenge.
+---
