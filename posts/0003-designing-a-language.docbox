@@ -8,8 +8,8 @@ Advantage of creating a new programming languages is that you can start from scr
 Unpredictability in languages confuse new developers. Additionally, to borrow from zen of python, explicit is better than implicit.
 ;Being pure to the language's own philosophy is hard work.
 ---
-It is often things that are implicit that makes it harder to reason with a language. I think it is better to have some amount of implicit things if it is convenient. 
-It is usually better to not go overboard with this.
+It is often things that are implicit that makes it harder to reason with a language. If it is harder to reason with then, it is a quirk. I think it is better to have some amount of implicit things if it is convenient. 
+I believe it is usually better to not go overboard with this.
 ---
 Explicit is where languages like Java shines. However, at some-point highly explicit languages code becomes too boilerplate like.
 ;More fluff and less stuff.
@@ -30,5 +30,6 @@ Some languages even allows having code outside of functions. Even though this ma
 *It is nothing but pure fun.
 *Improve your design and planning skills.
 *Rules are meant to be broken.
+*Solve problems that are hard or annoying to solve with languages you have now.
 ;It is also a very good programming challenge.
 ---
