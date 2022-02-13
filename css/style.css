@@ -23,6 +23,22 @@ a:hover {
     color: #ead595
 }
 
+a.read-more {
+    display: inline-block;
+    border: 1px dashed #a6fff8;
+    color: #a6fff8;
+    padding: 0 5px;
+    margin: auto 2px;
+    font-size: .8em;
+    text-decoration: none;
+}
+
+a.read-more:hover {
+    border: 1px dashed #ead595;
+    background: #3b351b;
+    color: #ead595;
+}
+
 ul {
     margin-left: 20px
 }

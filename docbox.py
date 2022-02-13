@@ -74,6 +74,11 @@ from pygments.token import Keyword, String
 from pygments.token import Text, Comment, Operator, Name, Number, Punctuation
 from pygments.util import shebang_matches
 
+MINIFIER_COMMAND = "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags " \
+                     "--remove-redundant-attributes --remove-script-type-attributes " \
+                     "--remove-tag-whitespace --use-short-doctype " \
+                     "--minify-css true --minify-js true -o \"$OUT$\" \"$OUT$\""
+
 NEWLINE = '\n'  # Unix newline character
 NOT_ALLOWED = re.compile(r"[^a-z0-9]")
 TWO_OR_MORE_DASHES = re.compile(r"[\-]+")
@@ -547,17 +552,19 @@ class DocBoxFile:
     """
 
     def __init__(self, file_path: str, num_gen, id_gen, text: str = ""):
-        self._file_path = file_path
+        self.file_path = file_path
         self._num_gen = num_gen
         self._id_gen = id_gen
         self._text = text
+        self.limit = -1
+        self.read_more = ""
 
     def _get_lines(self):
         if self._text:
             for line in self._text.splitlines():
                 yield line
         else:
-            with open(self._file_path, "r+", encoding="utf-8") as f:
+            with open(self.file_path, "r+", encoding="utf-8") as f:
                 for line in f:
                     yield line
 
@@ -567,7 +574,14 @@ class DocBoxFile:
         html_lines = []
         code_lines = []
         possible_type = "python"
+        sections = 0
         for line in self._get_lines():
+            if 0 < self.limit <= sections:
+                read_more = '<a class="read-more" href="{}">Read More</a>'.format(self.read_more)
+                tokens.append(Token(TokenType.SEPARATOR, "", ""))
+                tokens.append(Token(TokenType.RAW_HTML, read_more, read_more))
+                tokens.append(Token(TokenType.SEPARATOR, "", ""))
+                break
             # remove all spaces from left side of the line
             # as we do ignore those
             stripped_line = line.lstrip()
@@ -618,9 +632,11 @@ class DocBoxFile:
                 code_lines = []
             elif stripped_line.rstrip() == "---":
                 tokens.append(Token(TokenType.SEPARATOR, "", ""))
+                sections += 1
             else:
                 tokens.append(
                     Token(TokenType.DEFAULT, markdown.markdown((stripped_line)), stripped_line))
+
         return tokens
 
 
@@ -775,17 +791,17 @@ class DocBoxApp:
         self._output_file = os.path.join(self._root, "docs", "index.html")
         self._title = html.escape("JaDogg's Website")
         self._desc = html.escape("JaDogg's Website -> I love programming in C++ and Python. This is my new website.")
-        self._minifier_command = "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags " \
-                                 "--remove-redundant-attributes --remove-script-type-attributes " \
-                                 "--remove-tag-whitespace --use-short-doctype " \
-                                 "--minify-css true --minify-js true -o \"$OUT$\" \"$OUT$\""
+        self._minifier_command = MINIFIER_COMMAND
         self._id_gen = IdGen()
         self._num_gen = TitleNumGen()
 
     def convert(self, arguments):
         parsed_args = self._parse_arguments(arguments)
         self._use_args(parsed_args)
-        self._convert(parsed_args.r, parsed_args.allheaders)
+        if parsed_args.posts:
+            self._convert_posts(parsed_args.r, parsed_args.allheaders, parsed_args.posts)
+        else:
+            self._convert(parsed_args.r, parsed_args.allheaders)
 
     def convert_text(self, arguments, single_file_text: str):
         parsed_args = self._parse_arguments(arguments)
@@ -811,6 +827,7 @@ class DocBoxApp:
                             help="Do not put numbers in titles")
         parser.add_argument("--all-headers-in-toc", dest="allheaders", default=False, action="store_true",
                             help="All headers in ToC")
+        parser.add_argument("--posts", dest="posts", default=None, type=str, help="Use posts mode.")
         if arguments:
             result = parser.parse_args(arguments)
         else:
@@ -820,7 +837,7 @@ class DocBoxApp:
     def _use_args(self, result):
         self._input_dir = result.inp
         self._output_file = result.out
-        self._minifier_command = self._minifier_command.replace("$OUT$", self._output_file)
+        self._minifier_command = MINIFIER_COMMAND.replace("$OUT$", self._output_file)
         self._title = html.escape(result.title)
         self._desc = html.escape(result.title)
         self._template_root = result.template
@@ -833,6 +850,32 @@ class DocBoxApp:
         self._num_gen.reset()
 
     def _convert(self, reversed_=False, all_headers=False):
+        doc_objects = self._get_docs(reversed_)
+        HtmlConverter(doc_objects, self._output_file, self._template_cell,
+                      self._template_main0, self._template_main1,
+                      self._minifier_command, self._title, self._desc, all_headers).convert()
+
+    def _convert_posts(self, reversed_=False, all_headers=False, posts: str = "posts"):
+        doc_objects = self._get_docs(reversed_)
+        # Limit posts to just 2 sections
+        for d in doc_objects:
+            d.limit = 2
+            d.read_more = os.path.join(posts, os.path.basename(d.file_path)[5:].replace(".docbox", ".html"))
+        parent_dir = os.path.dirname(self._output_file)
+        HtmlConverter(doc_objects, self._output_file, self._template_cell,
+                      self._template_main0, self._template_main1,
+                      self._minifier_command, self._title, self._desc, all_headers).convert()
+        for d in doc_objects:
+            d.limit = -1
+            target = os.path.join(parent_dir, d.read_more)
+            self._id_gen.reset()
+            self._num_gen.reset()
+            HtmlConverter([d], target, self._template_cell,
+                          self._template_main0, self._template_main1,
+                          MINIFIER_COMMAND.replace("$OUT$", target),
+                          self._title, self._desc, all_headers=True).convert()
+
+    def _get_docs(self, reversed_):
         docs = [x for x in os.listdir(self._input_dir) if x.endswith(".docbox")]
         if reversed_:
             docs = sorted(docs, key=lambda x: -int(x[:4]))
@@ -840,9 +883,7 @@ class DocBoxApp:
             docs = sorted(docs, key=lambda x: int(x[:4]))
         docs = [os.path.join(self._input_dir, x) for x in docs]
         doc_objects = [DocBoxFile(x, self._num_gen, self._id_gen) for x in docs]
-        HtmlConverter(doc_objects, self._output_file, self._template_cell,
-                      self._template_main0, self._template_main1,
-                      self._minifier_command, self._title, self._desc, all_headers).convert()
+        return doc_objects
 
 
 def conv(arguments=None):

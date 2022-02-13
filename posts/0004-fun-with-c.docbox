@@ -1,0 +1,57 @@
+#Fun with C and C++ Part 01 - Loops
+
+---
+
+I'm thinking of writing about what I learn about C and C++. Writing allow me to think slowly and properly understand things.
+
+If you think about it, `for` loop can be done with a `while` loop. Even `do-while` can be simulated with a `while` if you add some duplicate code before.
+
+---
+
+```c
+int main(void) {
+    int i = 1;
+    int j = 0;
+    while (i <= 10) {
+       j += i;
+       i++;
+    }
+    return j;
+}
+```
+
+---
+
+```asm
+main:
+        ; save stack pointer
+        push    rbp
+        mov     rbp, rsp
+        ; int i = 1
+        mov     DWORD PTR [rbp-4], 1
+        ; int j = 0
+        mov     DWORD PTR [rbp-8], 0
+        ; go to .L2
+        jmp     .L2
+.L3:
+        ; eax = i
+        mov     eax, DWORD PTR [rbp-4]
+        ; j += eax
+        add     DWORD PTR [rbp-8], eax
+        ; i += 1
+        add     DWORD PTR [rbp-4], 1
+.L2:
+        ; compare i and 10
+        cmp     DWORD PTR [rbp-4], 10
+        ; if less than or eq jump to .L3
+        jle     .L3
+        ; eax = j
+        mov     eax, DWORD PTR [rbp-8]
+        ; revert stack pointer back to previous value
+        pop     rbp
+        ; return eax
+        ret
+```
+; x86-64 gcc 11.2 with `-O0`
+
+---
