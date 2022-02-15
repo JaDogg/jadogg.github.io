@@ -36,10 +36,6 @@ base_del_statement: "del" expr
 del_statement: base_del_statement st_end
 # Defer can use a del statement or an expr
 defer_statement: "defer" (base_del_statement | expr) st_end
-# Annotations are used to define types of functions or structures
-# Currently only @device, @native and @generic annotations are available.
-# Annotations may have a single string parameter.
-annotation: "@" name ( "(" (string | triple_quote_string ) ")" ) newline
 # Functions
 def_statement: annotation* "def" name "(" parameters? ")" block st_end
 # Let statement creates variables
@@ -99,8 +95,8 @@ comparision: term ((">" | ">=" | "<" | "<=") term)*
 term: factor (("-" | "+") factor)*
 factor: unary (("/" | "*") unary)*
 unary: "-" unary | fncall
-fncall: primary ( "(" arguments? ")" | "." name )*
-primary: "True" | "False" | "None" | number | string | triple_quote_string |
+fncall: primary ( "(" arguments? ")" | "[" expr "]" | "." name )*
+primary: "True" | "False" | "None" | number | string | triple_quote_string | name |
           "(" expr ")"
 ```
 ;Based on [lox grammar](https://craftinginterpreters.com/appendix-i.html) and [Python operator precedence](https://www.mathcs.emory.edu/~valerie/courses/fall10/155/resources/op_precedence.html).
@@ -108,6 +104,10 @@ primary: "True" | "False" | "None" | number | string | triple_quote_string |
 ## Useful utils
 ---
 ```yaksha
+# Annotations are used to define types of functions or structures
+# Currently only @device, @native and @generic annotations are available.
+# Annotations may have a single string parameter.
+annotation: "@" name ( "(" (string | triple_quote_string ) ")" ) newline
 parameters: parameter ("," parameter)*
 parameter: name ":" datatype
 st_end: newline | eof
