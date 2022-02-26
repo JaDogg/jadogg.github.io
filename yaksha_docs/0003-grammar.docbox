@@ -70,7 +70,7 @@ block: ":" (newline ba_indent standard_statement+ ba_dedent | simple_statement)
 ## Data Type
 ---
 ```yaksha
-data_type: data_type_part | name "[" data_type_args "]"
+data_type: data_type_part | name ("." name)? ("[" data_type_args "]")? 
 data_type_args: data_type ("," data_type)*
 data_type_part: name | primitive_data_type
 primitive_data_type: "int" | "i8" | "i16" | "i32" | "i64" |

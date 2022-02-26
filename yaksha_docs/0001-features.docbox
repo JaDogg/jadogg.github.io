@@ -75,16 +75,6 @@ def main() -> int:
     return 0
 ```
 ---
-### Print statement
----
-!!!<p><span class="yellow-status">in progress</span></p>
----
-*This is a statement and not an expression (function call).
-;This may change to a builtin function in the future.
-*Does not support more than one parameter.
-*Does not suffix a new line character at the end.
-*Only builtin data types can be printed.
----
 ### Functions
 ---
 #### Basic functions
@@ -127,34 +117,34 @@ If `ccode` is there instead of a pass statement, it compiles to a macro.
 #define yy__getarg(yy_n) (yk__sdsdup(global_args[yy__n]))
 ```
 ---
-#### Generic functions
+#### Template functions
 ---
 !!!<p><span class="red-status">not started</span></p>
 ---
-*Return type can also be a generic if that generic is used in parameters.
-*String passed inside `@generic(` should be single upper case characters separated by commas.
-;This means it is limited to 26 generics max.
+*Return type can also be a template-arg if that template-arg is used in parameters.
+*String passed inside `@template(` should be single upper case characters separated by commas.
+;This means it is limited to 26 template arguments max.
 ---
 ```yaksha
 @native("yk__arrput")
-@generic("T")
+@template("T")
 def arrput(a: Array[T], v: T) -> bool:
     pass
 
 @native("yk__hmput")
-@generic("K,V")
+@template("K,V")
 def hmput(a: HashMap[K,V], key: K, value: V) -> bool:
     pass
 
 @native("yk__hmget")
-@generic("K,V")
+@template("K,V")
 def hmget(a: HashMap[K,V], key: K) -> V:
     pass
 ```
 ---
 #### GPU/OpenCL device functions
 ---
-!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.5</span></p>
 ---
 *Easy access to GPU through OpenCL.
 ```yaksha
@@ -286,7 +276,7 @@ struct something:
 ---
 ### Import statement
 ---
-!!!<p><span class="red-status">not started</span></p>
+!!!<p><span class="yellow-status">in progress</span></p>
 ---
 *Import a file.
 ---
@@ -310,28 +300,28 @@ def main() -> int:
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
 ---
-*`print` - A `print` function will be introduced instead of `print` statement.
-*`println` - A `print` function that suffix a new line character.
-*`len` - Get length of strings and other data structures provided by the language.
-*`sizeof` - Size of structures or C data types.
-*`iterutf8` - Enumerate utf8 code points of a `str`, `strvw`, or `mstr`
-*`readfile` - Read a whole file and return an `mstr`. Empty string is returned if file cannot be read for some reason. This is a convenient function that pretends world is nice and fluffy.
-*`writefile` - Save a `str`, `strvw` or `mstr` to a file. `bool` is returned to show success or failure for any reason to write the file.
-*`slice` - Create a string view from a string with given start and end positions.
-*`tostr` - Converts `strvw` or `int` types to string (base 10). If input is a `str` it is duplicated. `float` types will be formatted with 2 decimal places.
-*`tomstr` - Same as `tostr` but it is converted to a managed strings.
-*`ftostr` - Converts a `float` to `str` with given decimal points.
-*`itostr` - Converts an `int` to `str` with given base up to 16.
-*`ftomstr` - Converts a `float` to `mstr` with given decimal points.
-*`itomstr` - Converts an `int` to `mstr` with given base up to 16.
-*`arrput` - Put item to an array.
-*`arrfree` - Free an array. Used by `del`.
-*`smput` - Put item to a StringHashMap.
-*`smget` - Get item from a StringHashMap.
-*`smfree` - Free StringHashMap and all string keys. Used by `del`.
-*`reversed` - Reverse an array creating a new array. New array need to be deleted.
-*`sorted` - Sort an array creating a new array. New array need to be deleted.
-;Built in functions may call different implementations in `C` based on input.
+* ✅ `print` - A `print` function will be introduced instead of `print` statement.
+* ✅ `println` - A `print` function that suffix a new line character.
+* ❌ `len` - Get length of strings and other data structures provided by the language.
+* ❌ `sizeof` - Size of structures or C data types.
+* ❌ `iterutf8` - Enumerate utf8 code points of a `str`, `strvw`, or `mstr`
+* ❌ `readfile` - Read a whole file and return an `mstr`. Empty string is returned if file cannot be read for some reason. This is a convenient function that pretends world is nice and fluffy.
+* ❌ `writefile` - Save a `str`, `strvw` or `mstr` to a file. `bool` is returned to show success or failure for any reason to write the file.
+* ❌ `slice` - Create a string view from a string with given start and end positions.
+* ❌ `tostr` - Converts `strvw` or `int` types to string (base 10). If input is a `str` it is duplicated. `float` types will be formatted with 2 decimal places.
+* ❌ `tomstr` - Same as `tostr` but it is converted to a managed strings.
+* ❌ `ftostr` - Converts a `float` to `str` with given decimal points.
+* ❌ `itostr` - Converts an `int` to `str` with given base up to 16.
+* ❌ `ftomstr` - Converts a `float` to `mstr` with given decimal points.
+* ❌ `itomstr` - Converts an `int` to `mstr` with given base up to 16.
+* ✅ `arrput` - Put item to an array.
+* ❌ `arrfree` - Free an array. Used by `del`.
+* ❌ `smput` - Put item to a StringHashMap.
+* ❌ `smget` - Get item from a StringHashMap.
+* ❌ `smfree` - Free StringHashMap and all string keys. Used by `del`.
+* ❌ `reversed` - Reverse an array creating a new array. New array need to be deleted.
+* ❌ `sorted` - Sort an array creating a new array. New array need to be deleted.
+;Builtin functions may call different implementations in `C` based on input.
 ---
 ## Non primitive data types
 ---

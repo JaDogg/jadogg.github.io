@@ -33,15 +33,14 @@ This section describes how compiler works.
 ---
 ### Import analyzer
 ---
-!!!<p><span class="red-status">not started</span></p>
+!!!<p><span class="yellow-status">in progress</span></p>
 ---
+!!
+<div class="banner-image"><img alt="Import Analyzer" src="images/yk-imports.png" style="max-width: 100%;" /></div>
+!!
 *Analyzes imports.
 *Parses imported files.
-**This step will use more instances of Tokenizer and Parser classes.
-*Come up with import order.
-*Rewrite import as prefixed code.
-*Combine ASTs.
-;Converts all to a single AST that rest of the phases can understand.
+**This step will use more instances of Tokenizer, Parser and Compiler objects.
 ### Def-Struct-Const Visitor
 ---
 !!!<p><span class="yellow-status">in progress</span></p>
@@ -74,14 +73,14 @@ This section describes how compiler works.
 ---
 ### Optimizer
 ---
-!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.5</span></p>
+!!!<p><span class="red-status">not started</span>
 ---
 *Remove dead code.
 *Basic constant folding.
 ---
 ### CL-Compiler
 ---
-!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.2</span></p>
+!!!<p><span class="red-status">not started</span><span class="blue-status">planned for v0.5</span></p>
 ---
 *Convert `@device` code to OpenCL program code.
 *Copy necessary structures.
