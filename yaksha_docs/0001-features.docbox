@@ -302,7 +302,7 @@ def main() -> int:
 ---
 * ✅ `print` - A `print` function will be introduced instead of `print` statement.
 * ✅ `println` - A `print` function that suffix a new line character.
-* ❌ `len` - Get length of strings and other data structures provided by the language.
+* ✅ `len` - Get length of strings and other data structures provided by the language.
 * ❌ `sizeof` - Size of structures or C data types.
 * ❌ `iterutf8` - Enumerate utf8 code points of a `str`, `strvw`, or `mstr`
 * ❌ `readfile` - Read a whole file and return an `mstr`. Empty string is returned if file cannot be read for some reason. This is a convenient function that pretends world is nice and fluffy.
@@ -315,6 +315,7 @@ def main() -> int:
 * ❌ `ftomstr` - Converts a `float` to `mstr` with given decimal points.
 * ❌ `itomstr` - Converts an `int` to `mstr` with given base up to 16.
 * ✅ `arrput` - Put item to an array.
+* ✅ `arrpop` - Remove last item from an array and return it.
 * ❌ `arrfree` - Free an array. Used by `del`.
 * ❌ `smput` - Put item to a StringHashMap.
 * ❌ `smget` - Get item from a StringHashMap.
