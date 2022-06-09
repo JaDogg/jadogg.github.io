@@ -59,7 +59,7 @@ import os.path
 import re
 import subprocess
 from enum import Enum
-from typing import List
+from typing import List, Tuple
 
 import markdown
 from pygments import highlight
@@ -75,10 +75,10 @@ from pygments.token import Text, Comment, Operator, Name, Number, Punctuation
 from pygments.util import shebang_matches
 
 MINIFIER_COMMAND = "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags " \
-                     "--remove-redundant-attributes --remove-script-type-attributes " \
-                     "--remove-tag-whitespace --use-short-doctype " \
-                     "--minify-css true --minify-js true -o \"$OUT$\" \"$OUT$\""
-
+                   "--remove-redundant-attributes --remove-script-type-attributes " \
+                   "--remove-tag-whitespace --use-short-doctype " \
+                   "--minify-css true --minify-js true -o \"$OUT$\" \"$OUT$\""
+GIT_FILE_HISTORY_DAYS = "git log --follow --pretty=format:\"%ad\" --date=short -- $FILE$"
 NEWLINE = '\n'  # Unix newline character
 NOT_ALLOWED = re.compile(r"[^a-z0-9]")
 TWO_OR_MORE_DASHES = re.compile(r"[\-]+")
@@ -639,6 +639,17 @@ class DocBoxFile:
 
         return tokens
 
+    def extract_created_last_mod(self) -> Tuple[str, str]:
+        cmd = GIT_FILE_HISTORY_DAYS.replace("$FILE$", self.file_path)
+        text = subprocess.check_output(cmd, shell=True, universal_newlines=True)
+        days = text.splitlines()
+        if not days:
+            raise ValueError("Cannot extract metadata of file " + self.file_path)
+        # Return created and last modified days
+        if len(days) > 1:
+            return days[0], days[-1]
+        return days[0], days[0]
+
 
 class Cell:
     def __init__(self, content_: str, note_: str):
@@ -653,7 +664,8 @@ class Cell:
 
 class HtmlConverter:
     def __init__(self, files: List[DocBoxFile], target: str, template_cell: str, template_start: str,
-                 template_end: str, minifier_command: str, title: str, desc: str, all_headers: bool):
+                 template_end: str, minifier_command: str, title: str, desc: str, all_headers: bool,
+                 include_meta_after_first_header=False):
         """
         Html Converter - convert set of docbox files to a single html
         :param files: list of DocBoxFile objects
@@ -665,6 +677,7 @@ class HtmlConverter:
         :param title: html title
         :param desc: html description
         :param all_headers: All headers in ToC?
+        :param include_meta_after_first_header: include meta data such as created time after first header
         """
         self._files = files
         self._target = target
@@ -679,6 +692,7 @@ class HtmlConverter:
         self._desc = desc
         self._all_headers = all_headers
         self._toc = ""
+        self._include_meta_after_first_header = include_meta_after_first_header
 
     def convert(self):
         """
@@ -690,7 +704,7 @@ class HtmlConverter:
         note: List[str] = []
         toc: List[str] = []
         prev_bullet = -1
-        for section in self._get_sections():
+        for section, doc in self._get_sections():
             if section.token_type == TokenType.BULLET:
                 # depend on level place bullet points
                 # see below example
@@ -744,6 +758,9 @@ class HtmlConverter:
                     content.append(
                         "<h{level} id=\"{id_}\">{title}</h{level}>".format(id_=section.header_id, title=section.data,
                                                                            level=section.level + 1))
+                    if self._include_meta_after_first_header and section.level == 1:
+                        created_dt, last_mod_dt = doc.extract_created_last_mod()
+                        content.append("<small>Created {}, Last Modified {}</small>".format(created_dt, last_mod_dt))
                 elif section.token_type == TokenType.SEPARATOR:
                     # You can create a cell now with acquired content and note stuffs
                     cells.append(Cell(NEWLINE.join(content), NEWLINE.join(note)))
@@ -775,9 +792,9 @@ class HtmlConverter:
     def _get_sections(self):
         for doc in self._files:
             for section in doc.parse():
-                yield section
-            yield Token(TokenType.RAW_HTML, "<hr />", "<hr />")
-            yield Token(TokenType.NOTE_RAW_HTML, "<hr />", "<hr />")
+                yield section, doc
+            yield Token(TokenType.RAW_HTML, "<hr />", "<hr />"), doc
+            yield Token(TokenType.NOTE_RAW_HTML, "<hr />", "<hr />"), doc
 
 
 class DocBoxApp:
@@ -826,7 +843,7 @@ class DocBoxApp:
         parser.add_argument("--no-number", dest="nonum", default=False, action="store_true",
                             help="Do not put numbers in titles")
         parser.add_argument("--all-headers-in-toc", dest="allheaders", default=False, action="store_true",
-                            help="All headers in ToC")
+                            help="Include all levels of headers in ToC and not just level 1 headers")
         parser.add_argument("--posts", dest="posts", default=None, type=str, help="Use posts mode.")
         if arguments:
             result = parser.parse_args(arguments)
@@ -861,10 +878,12 @@ class DocBoxApp:
         for d in doc_objects:
             d.limit = 2
             d.read_more = os.path.join(posts, os.path.basename(d.file_path)[5:].replace(".docbox", ".html"))
+            d.read_more = d.read_more.replace("\\", "/")
         parent_dir = os.path.dirname(self._output_file)
         HtmlConverter(doc_objects, self._output_file, self._template_cell,
                       self._template_main0, self._template_main1,
-                      self._minifier_command, self._title, self._desc, all_headers).convert()
+                      self._minifier_command, self._title, self._desc, all_headers,
+                      include_meta_after_first_header=True).convert()
         for d in doc_objects:
             d.limit = -1
             target = os.path.join(parent_dir, d.read_more)
@@ -873,7 +892,8 @@ class DocBoxApp:
             HtmlConverter([d], target, self._template_cell,
                           self._template_main0, self._template_main1,
                           MINIFIER_COMMAND.replace("$OUT$", target),
-                          self._title, self._desc, all_headers=True).convert()
+                          self._title, self._desc, all_headers=True,
+                          include_meta_after_first_header=True).convert()
 
     def _get_docs(self, reversed_):
         docs = [x for x in os.listdir(self._input_dir) if x.endswith(".docbox")]
