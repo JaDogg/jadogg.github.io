@@ -647,7 +647,7 @@ class DocBoxFile:
             raise ValueError("Cannot extract metadata of file " + self.file_path)
         # Return created and last modified days
         if len(days) > 1:
-            return days[0], days[-1]
+            return days[-1], days[0]
         return days[0], days[0]
 
 
