@@ -1,0 +1,28 @@
+!!!<div class="banner-image"><img alt="System Design Toolkit" src="images/system-design-tooklit-banner.png" style="max-width: 100%;" /></div>
+---
+# Introduction
+---
+I got an idea to come up with set of reusable (technology oblivious) building blocks for system design. Main point is you can either use it diagrams.net (or desktop version), whiteboard or any other tool you like. I use it myself and there's no reason for people other than me to use it. I'm designing this backwards from system design diagrams, so I will come up with multiple system designs and extract common components. Any form of constructive criticism is appreciated as usual. 
+;🤔 Disagreeing for the sake of it is bad, cargo-culting is bad, somewhere middle is probably zen. - Me.
+---
+## Components
+---
+### Service
+---
+!!!<img alt="Three squares on top of each other with service written in the middle" src="images/sdt-service.png" style="max-width: 100%;" />
+This is used for microservice components. Reason why I put multiple boxes here is to indicate that there are more than one service instance running.
+Load balancing for this service is assumed to be dealt with. I do not think there's a reason to draw load balancers, but you can draw it if you wish.
+;This is different from function/lambda component.
+---
+### Pros-Cons Box
+!!!<img alt="Table with pros and cons specified as titles" src="images/sdt-pro-con.png" style="max-width: 100%;" />
+This is rather simple table to list pros and cons. Use it when you want to compare different technologies of decisions.
+;Pro - it got pros. Con - it got cons.
+---
+## Usage Samples
+---
+### Tinder System Design
+---
+!!!<img alt="Tinder Design, contain a diagram with arrows pointing to services" src="images/system-design-tinder.png" style="max-width: 100%;" />
+; I'm up for suggestions. If you got an idea let me know.
+---
