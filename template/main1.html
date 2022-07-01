@@ -1,4 +1,30 @@
     </div>
 </div>
+<script>
+(function () {
+    // based on - https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web/#toggling-themes
+    const btn = document.querySelector("#btn-toggle");
+    const theme = document.querySelector("#theme-link");
+    const key = "jadogg.github.io/theme"
+    const lightBtn = "Let there be light";
+    const darkBtn = "I thrive in darkness";
+    const currentTheme = localStorage.getItem(key);
+    if (currentTheme === "/assets/style.min.css" || currentTheme === "/assets/style.light.min.css") {
+        theme.href = currentTheme;
+        btn.innerHTML = currentTheme === "/assets/style.min.css" ? lightBtn : darkBtn;
+    }
+    btn.addEventListener("click", function() {
+      if (theme.getAttribute("href") === "/assets/style.min.css") {
+        theme.href = "/assets/style.light.min.css";
+        localStorage.setItem(key, "/assets/style.light.min.css");
+        btn.innerHTML = darkBtn;
+      } else {
+        theme.href = "/assets/style.min.css";
+        localStorage.setItem(key, "/assets/style.min.css");
+        btn.innerHTML = lightBtn;
+      }
+    });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,51 @@
+## Tinder System Design
+---
+!!!<a href="images/system-design-tinder.png" target="_blank" rel="noopener noreferrer"><img alt="Tinder Design, contain a diagram with arrows pointing to services" src="images/system-design-tinder.png" style="max-width: 100%;" /></a>
+; I'm up for suggestions. If you got an idea let me know.
+;!<p><span class="yellow-status">in progress</span></p>
+---
+### How to find people close to you?
+Main crux of this design is to find a suitable methodology to find people close to you.
+* We can use Google S3 or Uber H3 - Both are ready-made libraries for this task. 
+* We can use geo-hash prefix matching. This is a human-readable format, and you can easily look at two hashes and if they are closer based on the prefix.
+* Creating our own library - quad tree.
+#### Quad Tree
+This is an important data structure that we can use if we want to come up with this ourselves. Think of this as a structure that allows you to break down a square to four small squares, and you can keep going until it is very small. Internally it is a tree with 4 children.
+!!!<img alt="3 Squares with quad-tree breakdown" src="images/sdt-quad-tree.png" style="max-width: 100%;" />
+---
+#### Querying nearby people
+In above design we assumed that we use can find nearby users by simply looking at the profile database. However, we did not dive deep into what we need to ensure that we properly distribute profile data so we do not brown out a single node.
+---
+#### Geo-sharding
+Geo sharding is a concept where we map roughly similar user count regions of the world in to different shards of the database. This is a load balancing mechanism and a way to avoid querying a lot of nodes and wasting time. As explained in Tinder blog posts they came up with shards by experimenting and finding out which amount of shards and how it was distributed resulted in good p50, p90 and p99 latency metrics. Example - London can be placed in one geo-shard while most of the Australian desert can also be placed in a single geo-shard. So the actual number of users would impact this rather than surface area on Earth.
+; Geo-sharding is a form of load balancing.
+---
+### Rest of the system
+---
+#### Authentication and security
+For a secure system we need to consider `AAA` (Authentication , Authorization, and Accounting). However, there is no need to do implement a `RBAC` (Role-based access control) for end-users of the system. They will all be able to log-in to their own account and use the application. `RBAC` and full `AAA` is however important for internal teams.
+So from system design perspective something like eventual consistency does not make sense for passwords. Passwords themselves we cannot store in a database like you would with any other data. 
+* OWASP recommend `Argon2id` these days (`scrypt` and `PBKDF2-HMAC-SHA512` with `120k` iterations is also sufficient).  
+	* We can also use peppering for further security.
+* Another alternative is to sign in using email and never store any passwords.
+* It is also better to avoid coming up with own cryptographical algorithms. 
+* It is perfectly fine to write it yourself for everything else. Having too many dependencies open yourself up to a lot of vulnerabilities. 
+Getting back to why not eventual consistency, it is because if you change the password - It needs either successfully change everywhere or not change at all. This disallows a bad actor to luck into the system.
+---
+#### Storing images
+For a service such as Tinder images are essential. However, images are not required to find nearby users. It is however essential for users to see other users' images. Therefore, we can use on-disk storage for images and simply have a reference to it in our profile database. So when a user browse a profile we can get request these images on demand.
+---
+##### Caches and power law distribution
+Caches or in this case specifically a `CDN` (Content delivery network) which is also another system on its own can help us scale with the load to access these user images. Let's think of celebrity situation, suddenly a recently divorced famous actor/actress creates a Tinder account. Now everyone wants to look at their images and swipe (whatever side for like). This is a good use-case for a `CDN` as these celebrity images are now cached.
+Since the number of requests for an account is distributed in a power law distribution due to pareto principle. We can assume that the CDN can use a `LRU` (Least recently used) cache eviction mechanism. This way most recently used image will be kept hot in the cache.
+; Likes, Money and Followers this all work in a power law distribution, those who have more will always get more.
+---
+#### Image formats
+Thumbnails for images is essential, and we can use a lossy data format such as JPG for thumbnails. Another good alternative is WebP. Also, PNGs can be used if we need any crisp images, but we can just use JPG for that as well.
+;Google's WebP format is support across most browsers and platforms these days.
+---
+### Bibliography
+!!!<details><summary>Bibliography for Tinder Design</summary><small><small>
+TODO
+!!!</small></small></details>
+---
