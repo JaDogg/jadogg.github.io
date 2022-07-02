@@ -20,32 +20,56 @@ In above design we assumed that we use can find nearby users by simply looking a
 Geo sharding is a concept where we map roughly similar user count regions of the world in to different shards of the database. This is a load balancing mechanism and a way to avoid querying a lot of nodes and wasting time. As explained in Tinder blog posts they came up with shards by experimenting and finding out which amount of shards and how it was distributed resulted in good p50, p90 and p99 latency metrics. Example - London can be placed in one geo-shard while most of the Australian desert can also be placed in a single geo-shard. So the actual number of users would impact this rather than surface area on Earth.
 ; Geo-sharding is a form of load balancing.
 ---
+#### Matching and likes
+For this I'm thinking we can use a queue and set of serverless functions/lambdas to process incoming likes and write that to a database/cache. And we can use another set of lambdas to turn matches to notifications.
+; System that can spin up on-demand functions and distributed queues are (sub)systems of this system.
+---
 ### Rest of the system
 ---
 #### Authentication and security
-For a secure system we need to consider `AAA` (Authentication , Authorization, and Accounting). However, there is no need to do implement a `RBAC` (Role-based access control) for end-users of the system. They will all be able to log-in to their own account and use the application. `RBAC` and full `AAA` is however important for internal teams.
-So from system design perspective something like eventual consistency does not make sense for passwords. Passwords themselves we cannot store in a database like you would with any other data. 
+For a secure system we need to consider `AAA` (Authentication , Authorization, and Accounting). However, there is no need to do implement a `RBAC` (Role-based access control) for end-users of the system. They will all be able to log-in to their own account and use the application. `RBAC` and full `AAA` is however important for internal teams and any admin applications used internally.
+So from system design perspective something like eventual consistency does not make sense for passwords. Passwords themselves we cannot store in a database like you would with any other data. This is why we say use a `CP` database for this. 
 * OWASP recommend `Argon2id` these days (`scrypt` and `PBKDF2-HMAC-SHA512` with `120k` iterations is also sufficient).  
-	* We can also use peppering for further security.
+* We can also use `peppering` for further security.
 * Another alternative is to sign in using email and never store any passwords.
 * It is also better to avoid coming up with own cryptographical algorithms. 
 * It is perfectly fine to write it yourself for everything else. Having too many dependencies open yourself up to a lot of vulnerabilities. 
 Getting back to why not eventual consistency, it is because if you change the password - It needs either successfully change everywhere or not change at all. This disallows a bad actor to luck into the system.
+; We can design authentication as a system as well.
 ---
 #### Storing images
-For a service such as Tinder images are essential. However, images are not required to find nearby users. It is however essential for users to see other users' images. Therefore, we can use on-disk storage for images and simply have a reference to it in our profile database. So when a user browse a profile we can get request these images on demand.
+For a service such as Tinder images are essential. However, images are not required to find nearby users. It is however essential for users to see other users' images. Therefore, we can use on-disk storage for images and have a reference to it in our profile database. So when a user browse a profile we can get request these images on demand. It make sense to use a distributed file system.
+; `DFS` (Distributed file system) is a (sub)system that we use in this system.
 ---
 ##### Caches and power law distribution
 Caches or in this case specifically a `CDN` (Content delivery network) which is also another system on its own can help us scale with the load to access these user images. Let's think of celebrity situation, suddenly a recently divorced famous actor/actress creates a Tinder account. Now everyone wants to look at their images and swipe (whatever side for like). This is a good use-case for a `CDN` as these celebrity images are now cached.
 Since the number of requests for an account is distributed in a power law distribution due to pareto principle. We can assume that the CDN can use a `LRU` (Least recently used) cache eviction mechanism. This way most recently used image will be kept hot in the cache.
 ; Likes, Money and Followers this all work in a power law distribution, those who have more will always get more.
 ---
-#### Image formats
+##### Image formats
 Thumbnails for images is essential, and we can use a lossy data format such as JPG for thumbnails. Another good alternative is WebP. Also, PNGs can be used if we need any crisp images, but we can just use JPG for that as well.
 ;Google's WebP format is support across most browsers and platforms these days.
 ---
 ### Bibliography
 !!!<details><summary>Bibliography for Tinder Design</summary><small><small>
-TODO
+AAA (computer security). (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=AAA_(computer_security)&oldid=1068643459 [Accessed 1 July 2022].
+Designing Tinder - High Scalability -. (no date). Available from http://highscalability.com/blog/2022/1/17/designing-tinder.html [Accessed 1 July 2022].
+Geometry on the Sphere: Google\x27s S2 Library. (no date). Available from https://docs.google.com/presentation/d/1Hl4KapfAENAOf4gv-pSngKwvS_jwNVHRPZTTDzXXn6Q [Accessed 1 July 2022].
+GKQuadtree | Apple Developer Documentation. (no date). Available from https://developer.apple.com/documentation/gameplaykit/gkquadtree [Accessed 1 July 2022].
+Li, X. (2019). Geosharded Recommendations Part 2: Architecture. Tinder Tech Blog. Available from https://medium.com/tinder/geosharded-recommendations-part-2-architecture-3396a8a7efb [Accessed 1 July 2022].
+Pareto principle. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=Pareto_principle&oldid=1095743858 [Accessed 1 July 2022].
+Password Storage - OWASP Cheat Sheet Series. (no date). Available from https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2 [Accessed 1 July 2022].
+Passwordless authentication. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=Passwordless_authentication&oldid=1082243741 [Accessed 1 July 2022].
+Power law. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=Power_law&oldid=1091370904 [Accessed 1 July 2022].
+Ren, F. (2019). Geosharded Recommendations Part 1: Sharding Approach. Tinder Tech Blog. Available from https://medium.com/tinder/geosharded-recommendations-part-1-sharding-approach-d5d54e0ec77a [Accessed 1 July 2022].
+Role-based access control. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=Role-based_access_control&oldid=1094481919 [Accessed 1 July 2022].
+S2 Geometry. (no date). S2Geometry. Available from http://s2geometry.io/ [Accessed 1 July 2022].
+Thomson, D. (2019). Geosharded Recommendations Part 3: Consistency. Tinder Tech Blog. Available from https://medium.com/tinder/geosharded-recommendations-part-3-consistency-2d2cb2f0594b [Accessed 1 July 2022].
+Tran, J. (2019). Which Image Format for Making Smaller File Size? GretaThemes. Available from https://gretathemes.com/image-format-for-smaller-file-size/ [Accessed 1 July 2022].
+UV mapping. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=UV_mapping&oldid=1094514074 [Accessed 1 July 2022].
+WebP Compression Study. (no date). Google Developers. Available from https://developers.google.com/speed/webp/docs/webp_study [Accessed 1 July 2022].
+What is a Quadtree & how is it used in location-based services? (no date). Available from https://www.educative.io/answers/what-is-a-quadtree-how-is-it-used-in-location-based-services [Accessed 1 July 2022].
+Whited, S. (no date). Best practices for password hashing and storage. Internet Engineering Task Force. Available from https://datatracker.ietf.org/doc/draft-ietf-kitten-password-storage-04 [Accessed 1 July 2022].
+
 !!!</small></small></details>
 ---
