@@ -1,0 +1,16 @@
+# Change to the website and System Design Toolkit
+---
+* Added light theme toggle. This however requires JavaScript to work. (It should default to dark theme).
+** I mean it makes sense that you don't always want to use a dark theme.
+** Sometimes a toggle of theme help to think. (At least for me.)
+---
+* Slight changes to the menu.
+** There's a button for toggling theme and projects in a different section.
+---
+* Added system design tool kit page.
+** This is mostly a writing project where I get to think and write what I understand.
+** This also allows me to challenge myself in a different manner from writing Yaksha.
+*** I want to come up with a way to easily do system designs using reusable vector images.
+*** In order to come up with components I first need to come up with various designs. 
+** Please raise a ticket in [git repository](https://github.com/JaDogg/jadogg.github.io) for this site if you disagree or know something is wrong.
+---

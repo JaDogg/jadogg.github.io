@@ -28,7 +28,7 @@ For this I'm thinking we can use a queue and set of serverless functions/lambdas
 ---
 #### Authentication and security
 For a secure system we need to consider `AAA` (Authentication , Authorization, and Accounting). However, there is no need to do implement a `RBAC` (Role-based access control) for end-users of the system. They will all be able to log-in to their own account and use the application. `RBAC` and full `AAA` is however important for internal teams and any admin applications used internally.
-So from system design perspective something like eventual consistency does not make sense for passwords. Passwords themselves we cannot store in a database like you would with any other data. This is why we say use a `CP` database for this. 
+So from system design perspective something like eventual consistency does not make sense for passwords. Passwords themselves we cannot store in a database like you would with any other data. 
 * OWASP recommend `Argon2id` these days (`scrypt` and `PBKDF2-HMAC-SHA512` with `120k` iterations is also sufficient).  
 * We can also use `peppering` for further security.
 * Another alternative is to sign in using email and never store any passwords.
