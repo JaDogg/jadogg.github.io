@@ -1,6 +1,73 @@
 ## Leetcode / Hacker rank system design
 ---
-!!!<a href="images/system-design-leetcode.png" target="_blank" rel="noopener noreferrer"><img alt="Tinder Design, contain a diagram with arrows pointing to services" src="images/system-design-leetcode.png" style="max-width: 100%;" /></a>
+!!!<a href="images/system-design-leetcode.png" target="_blank" rel="noopener noreferrer"><img alt="Leetcode Design, contain a diagram with arrows pointing to services" src="images/system-design-leetcode.png" style="max-width: 100%;" /></a>
 ; I'm up for suggestions for this as well. 
 ;!<p><span class="yellow-status">in progress</span></p>
+---
+### Code execution
+---
+Sandboxed code execution is one of the main features of an online judge platforms. 
+* Need to be isolated from the rest of the system - this is because some executed code can be malicious. 
+** Would be a good idea to disable everything except stdin/stdout as input output mechanisms.
+** No access to internet is a must as that opens us up to more risks.
+* Need to be flexible enough to run different supported compilers and interpreters.
+* In case of endless loops or the solution taking too much time we need to timeout.
+* Need to be able to handle scale of increased load to judge system.
+** Either by queuing input or rejecting.
+** Can also dynamically scale with more nodes if needed.
+---
+#### Solution A: Docker containers on lambdas (serverless)
+* 👍 Can scale up with more functions, of course that would also cost more.
+* 👍 Less hassle to set up if you wish to go this route.
+* 👍 Built in timeout logic.
+* 👍 Paid only for usage when lambdas are run.
+; It is almost as if lambdas were built for this. 😏
+---
+#### Solution B: Servers that take work from a queue spin up docker containers
+* 👍 Fixed cost if sufficient servers are present.
+* 👎 Same cost even if there are no usage. 
+* 👎 Cannot scale up as needed and more servers need to be added manually.
+* 👎 Need to come up with services that can take work from a queue and spin up docker containers
+* 👎 Server CPU/RAM monitoring is required to see that a container does not use too much resources.
+* 👎 Need to implement timing out logic.
+---
+### Plagiarism detection
+---
+It is possible to create an online judge system without a plagiarism detection method. However, it is needed if we want to run contests. Contestants will cheat and there should be a way to detect it. 
+#### Different forms of cheating
+---
+* A: Just copying and pasting same answer
+* B: Copying and pasting same answer with different comments, whitespace changes.
+* C: Variable name, function name changes
+* D: Combination of both B and C.
+* E: Partial similarities + D.
+; If you rewrite it as a complete different algorithm it is not possible detect. However, this is sufficient for what we need to do. Even coming up with a way to detect A or B type of cheating would be useful. 
+---
+#### Cheat detection process
+---
+I would implement cheat detection as a multistep process. We can have coordinated lambda executions to achieve this. There are few ways to implement cheat detection process.
+##### Solution A: Lambdas with step function execution
+* 👍 Steps are coordinated using step functions.
+* 👍 Can scale number of lambdas needed.
+##### Solution B: Coordinated work in static number of nodes
+* 👎 Will require implementation for coordination
+* 👎 Scale up require manually adding servers to the pool.
+---
+### Bibliography
+---
+!!!<details><summary>Bibliography for Leetcode / Hacker rank system design</summary><small><small>
+AWS Step Functions | Serverless Visual Workflows | Amazon Web Services. (no date). Amazon Web Services, Inc. Available from https://aws.amazon.com/step-functions/ [Accessed 3 July 2022].
+AWS Step Functions FAQs | Serverless Microservice Orchestration | Amazon Web Services. (no date). Amazon Web Services, Inc. Available from https://aws.amazon.com/step-functions/faqs/ [Accessed 3 July 2022].
+Bag-of-words model. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=Bag-of-words_model&oldid=1087243933 [Accessed 2 July 2022].
+Belkhouche, B., Nix, A. and Hassell, J. (2004). Plagiarism detection in software designs. Proceedings of the 42nd annual Southeast regional conference on   - ACM-SE 42. 2004. Huntsville, Alabama: ACM Press, 207. Available from https://doi.org/10.1145/986537.986585 [Accessed 2 July 2022].
+Cosma, G. and Joy, M. (2012). An Approach to Source-Code Plagiarism Detection and Investigation Using Latent Semantic Analysis. IEEE Transactions on Computers, 61 (3), 379–394. Available from https://doi.org/10.1109/TC.2011.223.
+Designing Online Judge or Leetcode. (2020). TianPan.co. Available from https://tianpan.co/notes/243-designing-online-judge-or-leetcode [Accessed 2 July 2022].
+Getting Started with ssdeep. (no date). Available from https://ssdeep-project.github.io/ssdeep/usage.html [Accessed 2 July 2022].
+Introduction to Document Similarity with Elasticsearch. (no date). Capsicum. Available from https://rebeccabilbro.github.io/intro-doc-similarity-with-elasticsearch/ [Accessed 2 July 2022].
+Okapi BM25. (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=Okapi_BM25&oldid=1082128332 [Accessed 2 July 2022].
+Plagiarism detection in your submitted code. (no date). HackerRank Support Center. Available from https://support.hackerrank.com/hc/en-us/articles/360018050274-Plagiarism-detection-in-your-submitted-code [Accessed 2 July 2022].
+Tresnawati, D., Syaichu R, A., and Kuspriyanto. (2012). Plagiarism Detection System Design for Programming Assignment in Virtual Classroom based on Moodle. Procedia - Social and Behavioral Sciences, 67, 114–122. Available from https://doi.org/10.1016/j.sbspro.2012.11.312.
+
+!!!</small></small></details>
+---
 ---

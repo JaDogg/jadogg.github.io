@@ -48,7 +48,7 @@ Since the number of requests for an account is distributed in a power law distri
 ---
 ##### Image formats
 Thumbnails for images is essential, and we can use a lossy data format such as JPG for thumbnails. Another good alternative is WebP. Also, PNGs can be used if we need any crisp images, but we can just use JPG for that as well.
-;Google's WebP format is support across most browsers and platforms these days.
+;Google's WebP format is supported across most browsers and platforms these days.
 ---
 ### Bibliography
 !!!<details><summary>Bibliography for Tinder Design</summary><small><small>
