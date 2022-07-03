@@ -1,0 +1,5 @@
+## In memory cache
+---
+In memory caches reduce latency when accessing databases and avoid recomputing values. This is an essential component of any system design.
+;!<p><span class="red-status">not started</span></p>
+---
