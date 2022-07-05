@@ -25,26 +25,27 @@ a:hover {
 
 /* Based on https://www.w3schools.com/css/css3_buttons.asp */
 .button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-
-.action-button:hover {
-  background-color: white;
-  color: black;
-  border: 2px solid #078f7b;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
 }
 
 .action-button {
-  background-color: #078f7b;
-  color: white;
+    background-color: #078f7b;
+    color: white;
+    border: 2px solid #078f7b
+}
+
+.action-button:hover {
+    background-color: white;
+    color: black;
+    border: 2px solid #078f7b
 }
 
 a.read-more {
@@ -121,7 +122,8 @@ body, html {
 }
 
 .content {
-    width: 70%;
+    width: calc(70% - 25px);
+    padding: 0 10px;
     display: inline-block;
     float: left;
     overflow: wrap;
@@ -171,6 +173,8 @@ hr {
 }
 
 .center-text {
+    margin-bottom: 20px;
+    margin-top: 20px;
     text-align: center
 }
 
@@ -221,11 +225,13 @@ hr {
     }
 
     .note {
-        width: 100%
+        padding: 0 10px;
+        width: calc(100% - 25px)
     }
 
     .content {
-        width: 100%
+        padding: 0 10px;
+        width: calc(100% - 25px)
     }
 
     .boxes {
@@ -236,7 +242,8 @@ hr {
         width: 100%;
         position: sticky;
         top: 0;
-        background: #323232
+        background: #323232;
+        overflow: hidden
     }
 
     .table-of-contents .real-toc {
