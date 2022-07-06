@@ -1,5 +1,25 @@
 ## Distributed queue
 ---
-Distributed queue that we can scale with more VMs.
-;!<p><span class="red-status">not started</span></p>
+Distributed queues are an essential subsystem that can be used as a component of many system designs. There are two obvious designs for distributed queues publisher-subscriber style and poll style. Additionally, priority queue specialization for queues exists. We will look at standard publisher-subscriber style queue. 
+First, let’s assume the scenario of implementing a single node queue. What would be the features of this single node queue system.
+;!<p><span class="yellow-status">in progress</span></p>
+---
+### Single node queue implementation
+---
+* Any node can reach this node and pass in a message to a topic.
+* Some binary protocol is used to communicate with the queue node.
+* Once messages are received, it is immediately written to an on-disk format with micro batching (n items are written to a file).
+* Certain threads are used to handle incoming messages this is then passed to I/O thread (s) to write to on-disk format (we can use an internal queue for that).
+* Few more threads can be used to reading from on-disk format and delivering message to destination. 
+* Message delivery will be based on the topic.
+* We allow configuration of message handling threads, I/O write threads and I/O read threads and message delivery threads.
+* Ideally, we will use lightweight / green threads / coroutines for all above threads and consume CPU_COUNT - x number of real OS threads. Coroutines can be implemented using duff's devices and CPU register snapshots. For distributed application we can use something that is built-in to the language or a library to achieve this. 
+* We can retry to deliver a message for a configurable number of times and then add that to another instance of queue. (In this single node example, it will be another node). This would be a dead letter queue. And with this now we have a nice chicken egg problem of dead letter queue. But we do not need to worry too much as dead letter queue will be the destination for things that we cannot deliver.
+* We can probably use a different directory for failed to deliver messages that we can retry.
+* Exponential backoff can be used to retry, so we avoid thundering herd problem. 
+* Now for a single node implementation (or two nodes if you count dead letter queue node) we will have nothing to do (or nothing can be done) if dead letter queue itself is not available. We can also consider modelling dead letter queue as a special topic as well.
+---
+### Multi-node implementation
+---
+!!!<a href="images/subsystem-design-distributed-queue-pub-sub.png" target="_blank" rel="noopener noreferrer"><img alt="Distributed Queue Design" src="images/subsystem-design-distributed-queue-pub-sub.png" style="max-width: 100%;" /></a>
 ---
