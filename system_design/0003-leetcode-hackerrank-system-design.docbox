@@ -28,7 +28,7 @@ Sandboxed code execution is one of the main features of an online judge platform
 * 👎 Same cost even if there are no usage. 
 * 👎 Cannot scale up as needed and more servers need to be added manually.
 * 👎 Need to come up with services that can take work from a queue and spin up docker containers
-* 👎 Server CPU/RAM monitoring is required to see that a container does not use too much resources.
+* 👎 Server CPU/RAM monitoring is required to see that a container does not use too many resources.
 * 👎 Need to implement timing out logic.
 ---
 ### Plagiarism detection
@@ -41,7 +41,7 @@ It is possible to create an online judge system without a plagiarism detection m
 * C: Variable name, function name changes
 * D: Combination of both B and C.
 * E: Partial similarities + D.
-; If you rewrite it as a complete different algorithm it is not possible detect. However, this is sufficient for what we need to do. Even coming up with a way to detect A or B type of cheating would be useful. 
+; If you rewrite it as a complete different algorithm, it is not possible detect. However, this is sufficient for what we need to do. Even coming up with a way to detect A or B type of cheating would be useful. 
 ---
 #### Cheat detection process
 ---
@@ -53,7 +53,7 @@ I would implement cheat detection as a multistep process. We can have coordinate
 * 👎 Will require implementation for coordination
 * 👎 Scale up require manually adding servers to the pool.
 ---
-### Bibliography
+### Bibliography for Leetcode design
 ---
 !!!<details><summary>Bibliography for Leetcode / Hacker rank system design</summary><small><small>
 AWS Step Functions | Serverless Visual Workflows | Amazon Web Services. (no date). Amazon Web Services, Inc. Available from https://aws.amazon.com/step-functions/ [Accessed 3 July 2022].

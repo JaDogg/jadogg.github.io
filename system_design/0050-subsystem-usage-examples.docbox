@@ -1,5 +1,5 @@
 # Subsystems and utility systems samples
 ---
-In this section we can see some samples of lower level utilities and subsystems that these other systems either assumes to exist or utilize.
+In this section we can see some samples of lower-level utilities and subsystems that these other systems either assumes to exist or utilize.
 ; Mostly for high level system design you only see one layer of the onion or one slice of the cake.
 ---

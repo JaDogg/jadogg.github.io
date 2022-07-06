@@ -17,7 +17,7 @@ This is an important data structure that we can use if we want to come up with t
 In above design we assumed that we use can find nearby users by simply looking at the profile database. However, we did not dive deep into what we need to ensure that we properly distribute profile data so we do not brown out a single node.
 ---
 #### Geo-sharding
-Geo sharding is a concept where we map roughly similar user count regions of the world in to different shards of the database. This is a load balancing mechanism and a way to avoid querying a lot of nodes and wasting time. As explained in Tinder blog posts they came up with shards by experimenting and finding out which amount of shards and how it was distributed resulted in good p50, p90 and p99 latency metrics. Example - London can be placed in one geo-shard while most of the Australian desert can also be placed in a single geo-shard. So the actual number of users would impact this rather than surface area on Earth.
+Geo sharding is a concept where we map roughly similar user count regions of the world in to different shards of the database. This is a load balancing mechanism and a way to avoid querying a lot of nodes and wasting time. As explained in Tinder blog posts they came up with shards by experimenting and finding out which number of shards and how it was distributed resulted in good p50, p90 and p99 latency metrics. Example - London can be placed in one geo-shard while most of the Australian desert can also be placed in a single geo-shard. So the actual number of users would impact this rather than surface area on Earth.
 ; Geo-sharding is a form of load balancing.
 ---
 #### Matching and likes
@@ -38,7 +38,7 @@ Getting back to why not eventual consistency, it is because if you change the pa
 ; We can design authentication as a system as well.
 ---
 #### Storing images
-For a service such as Tinder images are essential. However, images are not required to find nearby users. It is however essential for users to see other users' images. Therefore, we can use on-disk storage for images and have a reference to it in our profile database. So when a user browse a profile we can get request these images on demand. It make sense to use a distributed file system.
+For a service such as Tinder images are essential. However, images are not required to find nearby users. It is however essential for users to see other users' images. Therefore, we can use on-disk storage for images and have a reference to it in our profile database. So, when a user browses a profile we can get request these images on demand. It makes sense to use a distributed file system.
 ; `DFS` (Distributed file system) is a (sub)system that we use in this system.
 ---
 ##### Caches and power law distribution
@@ -50,7 +50,7 @@ Since the number of requests for an account is distributed in a power law distri
 Thumbnails for images is essential, and we can use a lossy data format such as JPG for thumbnails. Another good alternative is WebP. Also, PNGs can be used if we need any crisp images, but we can just use JPG for that as well.
 ;Google's WebP format is supported across most browsers and platforms these days.
 ---
-### Bibliography
+### Bibliography for Tinder system design
 !!!<details><summary>Bibliography for Tinder Design</summary><small><small>
 AAA (computer security). (2022). Wikipedia. Available from https://en.wikipedia.org/w/index.php?title=AAA_(computer_security)&oldid=1068643459 [Accessed 1 July 2022].
 Designing Tinder - High Scalability -. (no date). Available from http://highscalability.com/blog/2022/1/17/designing-tinder.html [Accessed 1 July 2022].
