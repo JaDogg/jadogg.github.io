@@ -11,6 +11,11 @@
     margin-bottom: 3px
 }
 
+.timestamp {
+    font-size: 0.6em;
+    color: #8f8e8e;
+}
+
 a:link {
     color: #a6fff8
 }
