@@ -1,0 +1,44 @@
+baseURL = 'https://jadogg.github.io/'
+languageCode = 'en-us'
+title = "😺 Bhathiya's Site"
+theme = 'hugo-theme-j1'
+canonifyURLs = true
+paginate = 6
+enableRobotsTXT = false
+
+[markup.highlight]
+style = "xcode"
+lineNos = true
+lineNumbersInTable = false
+
+
+[markup.tableOfContents]
+endLevel = 7
+ordered = false
+startLevel = 2
+
+[markup.goldmark.renderer]
+unsafe= true
+
+[social]
+github = "https://github.com/JaDogg"
+rss = "https://jadogg.github.io/index.xml"
+email = "https://news.ycombinator.com/user?id=JaDogg"
+
+[sitemap]
+changefreq = "weekly"
+filename = "sitemap.xml"
+priority = 0.5
+
+[params]
+bio = "I am a software engineer who loves to build things."
+description = "My personal website"
+showPowerBy = false
+showToc = true
+enableRSS = true
+hiddenPostSummaryInHomePage = false
+iHasSkill = false
+
+[params.author]
+name = "JaDogg"
+email = "https://news.ycombinator.com/user?id=JaDogg"
