@@ -13,9 +13,9 @@ lineNumbersInTable = false
 
 
 [markup.tableOfContents]
-endLevel = 7
+endLevel = 4
 ordered = false
-startLevel = 2
+startLevel = 1
 
 [markup.goldmark.renderer]
 unsafe= true
