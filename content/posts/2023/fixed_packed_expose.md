@@ -16,7 +16,7 @@ This will compile a `struct` into a packed `struct`. This will be useful for wri
 
 I'm also thinking to limit this to only `struct`s and not `class`es. 
 
-```yaksha
+```python
 @packed("1")
 struct Foo:
     a: u8
@@ -26,13 +26,13 @@ struct Foo:
 ### Expose
 This will expose a `struct` / `class` / function to `C`. This will be useful for exposing things to `C` (access from `@native`). `Tuple`s cannot be exposed to `C`. 
 
-```yaksha
+```python
 @expose("foo") # foo will be the name of the function in `C`
 def foo(a: u8, b: u16) -> u32:
     return a + b
 ```
 
-## `FixedArr`
+## FixedArr
 
 ### Auto casting 
 
@@ -44,7 +44,7 @@ Since `FixedArr` is allocated on stack, it is not possible to return it from a f
 
 If we can add few quality of life improvements to `Tuple`, it will be easy to use it as a wrapper for `FixedArr`. 
 
-```yaksha
+```python
 def foo() -> Tuple[FixedArr[u8, 2]]:
     return tuple(fixedarr(1u8, 2u8))
 ```
@@ -53,7 +53,7 @@ def foo() -> Tuple[FixedArr[u8, 2]]:
 
 If we can make fixed arrays and tuples assignable, we can do some interesting things. 
 
-```yaksha
+```python
 def foo():
     a: FixedArr[u8, 2] = fixedarr(1u8, 2u8)
     b: FixedArr[u8, 2]
