@@ -12,7 +12,7 @@ I have decided to migrate my website from pure docbox to hugo. This year was not
 
 I recently read [xnacly's post on language performance](https://xnacly.me/posts/2023/language-performance/) improvement, and I was interested in ~~stealing~~ copying his design for my blog in addition to wanting to perf test Yaksha and YakshaLisp.
 
-## What will happen to docbox?
+# What will happen to docbox?
 
 * Now docbox version in this repo supports exporting to markdown format. This is how I moved my content to this site.
 * Docbox has builtin support for Yaksha syntax highlighting. So I may need to still use it for some posts. (at least for now)
